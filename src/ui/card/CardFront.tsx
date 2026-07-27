@@ -1,6 +1,5 @@
-import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { membro } from '../data/member';
+import type { Member } from '@/model/member';
 import LeftStrip from './LeftStrip';
 import PhotoPlaceholder from './PhotoPlaceholder';
 import CopvasfLogo from './CopvasfLogo';
@@ -8,11 +7,15 @@ import CopvasfLogo from './CopvasfLogo';
 const CARD_H = 215;
 const CONTENT_LEFT = 92;
 
-export default function CardFront() {
+type Props = {
+  member: Member;
+};
+
+export default function CardFront({ member }: Props) {
   return (
     <>
       <LeftStrip height={CARD_H}>
-        <PhotoPlaceholder size={50} source={require('../../assets/photo.png')} />
+        <PhotoPlaceholder size={50} source={require('../../../assets/photo.png')} />
       </LeftStrip>
 
       <View style={styles.content}>
@@ -21,10 +24,10 @@ export default function CardFront() {
 
         <View style={styles.divider} />
 
-        <Field label="Nome:" value={membro.nome} />
-        <Field label="Função/Cargo:" value={membro.funcao} />
-        <Field label="Registro:" value={membro.registro} />
-        <Field label="Igreja:" value={membro.igreja} />
+        <Field label="Nome:" value={member.nome} />
+        <Field label="Função/Cargo:" value={member.funcao} />
+        <Field label="Registro:" value={member.registro} />
+        <Field label="Igreja:" value={member.igreja} />
 
         <View style={styles.footer}>
           <Text style={styles.versiculo} numberOfLines={2}>
@@ -40,11 +43,13 @@ export default function CardFront() {
   );
 }
 
-function Field({ label, value }) {
+function Field({ label, value }: { label: string; value: string }) {
   return (
     <View style={styles.field}>
       <Text style={styles.fieldLabel}>{label}</Text>
-      <Text style={styles.fieldValue} numberOfLines={1}>{value}</Text>
+      <Text style={styles.fieldValue} numberOfLines={1}>
+        {value}
+      </Text>
     </View>
   );
 }

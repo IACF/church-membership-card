@@ -12,6 +12,9 @@ services:
     environment:
       - REACT_NATIVE_PACKAGER_HOSTNAME=${HOST_IP:-0.0.0.0}
       - EXPO_DEVTOOLS_LISTEN_ADDRESS=0.0.0.0
+      # Modo offline: pula a verificação de conta ("unverified app") do Expo Go,
+      # que trava o handshake quando o container roda sem TTY interativo (detached).
+      - EXPO_OFFLINE=1
     stdin_open: true
     tty: true
 

@@ -3,6 +3,7 @@
     "name": "copvasf",
     "slug": "copvasf",
     "version": "1.0.0",
+    "scheme": "copvasf",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -31,6 +32,13 @@
       "eas": {
         "projectId": "71d5342b-eac2-4899-9b03-1d221b0460ac"
       }
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store"
+    ],
+    "experiments": {
+      "tsconfigPaths": true
     }
   }
 }

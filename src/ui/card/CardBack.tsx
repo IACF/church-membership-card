@@ -1,76 +1,79 @@
-import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
-import { membro } from '../data/member';
+import type { Member } from '@/model/member';
 import LeftStrip from './LeftStrip';
 
 const CARD_H = 215;
 const CONTENT_LEFT = 92;
 const QR_SIZE = 62;
 
-export default function CardBack() {
+type Props = {
+  member: Member;
+};
+
+export default function CardBack({ member }: Props) {
   return (
     <>
       <LeftStrip height={CARD_H} />
 
       <View style={styles.content}>
-        {/* Top: fields (left) + QR (right) */}
         <View style={styles.topRow}>
           <View style={styles.fieldsCol}>
             <View style={styles.fieldWide}>
               <Text style={styles.fieldLabel}>Filiação:</Text>
               <Text style={styles.fieldValue} numberOfLines={2}>
-                {membro.filiacao}
+                {member.filiacao}
               </Text>
             </View>
             <View style={styles.grid}>
-              <GridField label="CPF:" value={membro.cpf} />
-              <GridField label="Nascimento:" value={membro.nascimento} />
-              <GridField label="Estado Civil:" value={membro.estadoCivil} />
-              <GridField label="Validade:" value={membro.validade} />
+              <GridField label="CPF:" value={member.cpf} />
+              <GridField label="Nascimento:" value={member.nascimento} />
+              <GridField label="Estado Civil:" value={member.estadoCivil} />
+              <GridField label="Validade:" value={member.validade} />
             </View>
           </View>
 
           <View style={styles.qrBlock}>
             <Text style={styles.qrLabel}>AUTENTICIDADE</Text>
-            <QRCode
-              value="https://copvasf.org.br/membro/2024003"
-              size={QR_SIZE}
-              backgroundColor="#f8fafc"
-            />
+            <QRCode value={member.qrCodeValue} size={QR_SIZE} backgroundColor="#f8fafc" />
           </View>
         </View>
 
-        {/* Signatures */}
         <View style={styles.sigRow}>
-          <Signature name={membro.presidente} role="Presidente do COPVASF" />
-          <Signature name={membro.secretario} role="Secretário Geral do COPVASF" />
+          <Signature name={member.presidente} role="Presidente do COPVASF" />
+          <Signature name={member.secretario} role="Secretário Geral do COPVASF" />
         </View>
 
-        {/* Legal text */}
         <Text style={styles.legal} numberOfLines={3}>
-          O portador da presente, está apto a exercer suas atribuições como Capelão Eclesiástico de acordo com o Art. 5º, Inciso VII da CF e a Lei Federal nº 9.982 de 14 de julho de 2000.
+          O portador da presente, está apto a exercer suas atribuições como Capelão Eclesiástico de
+          acordo com o Art. 5º, Inciso VII da CF e a Lei Federal nº 9.982 de 14 de julho de 2000.
         </Text>
       </View>
     </>
   );
 }
 
-function GridField({ label, value }) {
+function GridField({ label, value }: { label: string; value: string }) {
   return (
     <View style={styles.gridCell}>
       <Text style={styles.fieldLabel}>{label}</Text>
-      <Text style={styles.fieldValue} numberOfLines={1}>{value}</Text>
+      <Text style={styles.fieldValue} numberOfLines={1}>
+        {value}
+      </Text>
     </View>
   );
 }
 
-function Signature({ name, role }) {
+function Signature({ name, role }: { name: string; role: string }) {
   return (
     <View style={styles.sig}>
       <View style={styles.sigLine} />
-      <Text style={styles.sigName} numberOfLines={1}>{name}</Text>
-      <Text style={styles.sigRole} numberOfLines={1}>{role}</Text>
+      <Text style={styles.sigName} numberOfLines={1}>
+        {name}
+      </Text>
+      <Text style={styles.sigRole} numberOfLines={1}>
+        {role}
+      </Text>
     </View>
   );
 }

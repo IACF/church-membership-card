@@ -1,9 +1,14 @@
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import { View, Text, TouchableOpacity, Animated, StyleSheet } from 'react-native';
+import type { Member } from '@/model/member';
 import CardFront from './CardFront';
 import CardBack from './CardBack';
 
-export default function MembershipCard() {
+type Props = {
+  member: Member;
+};
+
+export default function MembershipCard({ member }: Props) {
   const flipAnim = useRef(new Animated.Value(0)).current;
   const isFlippedRef = useRef(false);
 
@@ -33,25 +38,29 @@ export default function MembershipCard() {
     <View style={s.wrapper}>
       <TouchableOpacity onPress={flip} activeOpacity={1} style={s.shadow}>
         <View style={s.container}>
-          <Animated.View style={[
-            s.card,
-            {
-              transform: [{ perspective: 1200 }, { rotateY: frontRotate }],
-              backfaceVisibility: 'hidden',
-            },
-          ]}>
-            <CardFront />
+          <Animated.View
+            style={[
+              s.card,
+              {
+                transform: [{ perspective: 1200 }, { rotateY: frontRotate }],
+                backfaceVisibility: 'hidden',
+              },
+            ]}
+          >
+            <CardFront member={member} />
           </Animated.View>
 
-          <Animated.View style={[
-            s.card,
-            s.cardAbsolute,
-            {
-              transform: [{ perspective: 1200 }, { rotateY: backRotate }],
-              backfaceVisibility: 'hidden',
-            },
-          ]}>
-            <CardBack />
+          <Animated.View
+            style={[
+              s.card,
+              s.cardAbsolute,
+              {
+                transform: [{ perspective: 1200 }, { rotateY: backRotate }],
+                backfaceVisibility: 'hidden',
+              },
+            ]}
+          >
+            <CardBack member={member} />
           </Animated.View>
         </View>
       </TouchableOpacity>
