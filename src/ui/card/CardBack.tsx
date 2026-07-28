@@ -1,11 +1,9 @@
 import { View, Text, StyleSheet } from 'react-native';
-import QRCode from 'react-native-qrcode-svg';
 import type { Member } from '@/model/member';
 import LeftStrip from './LeftStrip';
 
 const CARD_H = 215;
 const CONTENT_LEFT = 92;
-const QR_SIZE = 62;
 
 type Props = {
   member: Member;
@@ -17,26 +15,17 @@ export default function CardBack({ member }: Props) {
       <LeftStrip height={CARD_H} />
 
       <View style={styles.content}>
-        <View style={styles.topRow}>
-          <View style={styles.fieldsCol}>
-            <View style={styles.fieldWide}>
-              <Text style={styles.fieldLabel}>Filiação:</Text>
-              <Text style={styles.fieldValue} numberOfLines={2}>
-                {member.filiacao}
-              </Text>
-            </View>
-            <View style={styles.grid}>
-              <GridField label="CPF:" value={member.cpf} />
-              <GridField label="Nascimento:" value={member.nascimento} />
-              <GridField label="Estado Civil:" value={member.estadoCivil} />
-              <GridField label="Validade:" value={member.validade} />
-            </View>
-          </View>
+        <View style={styles.fieldWide}>
+          <Text style={styles.fieldLabel}>Filiação:</Text>
+          <Text style={styles.fieldValue} numberOfLines={2}>
+            {member.filiacao}
+          </Text>
+        </View>
 
-          <View style={styles.qrBlock}>
-            <Text style={styles.qrLabel}>AUTENTICIDADE</Text>
-            <QRCode value={member.qrCodeValue} size={QR_SIZE} backgroundColor="#f8fafc" />
-          </View>
+        <View style={styles.grid}>
+          <GridField label="CPF:" value={member.cpf} />
+          <GridField label="Nascimento:" value={member.nascimento} />
+          <GridField label="Estado Civil:" value={member.estadoCivil} />
         </View>
 
         <View style={styles.sigRow}>
@@ -91,13 +80,6 @@ const styles = StyleSheet.create({
     paddingLeft: 4,
     justifyContent: 'space-between',
   },
-  topRow: {
-    flexDirection: 'row',
-    gap: 6,
-  },
-  fieldsCol: {
-    flex: 1,
-  },
   fieldWide: {
     marginBottom: 4,
   },
@@ -119,17 +101,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#1a202c',
     lineHeight: 11,
-  },
-  qrBlock: {
-    width: QR_SIZE + 4,
-    alignItems: 'center',
-  },
-  qrLabel: {
-    fontSize: 6,
-    fontWeight: '700',
-    color: '#718096',
-    letterSpacing: 1,
-    marginBottom: 3,
   },
   sigRow: {
     flexDirection: 'row',

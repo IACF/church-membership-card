@@ -14,3 +14,6 @@ yarn-error.*
 
 .DS_Store
 *.pem
+
+# Playwright MCP (snapshots/screenshots gerados na validação de UI)
+.playwright-mcp/

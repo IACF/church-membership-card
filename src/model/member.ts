@@ -9,8 +9,6 @@ export interface Member {
   cpf: string;
   nascimento: string;
   estadoCivil: string;
-  validade: string;
   presidente: string;
   secretario: string;
-  qrCodeValue: string;
 }

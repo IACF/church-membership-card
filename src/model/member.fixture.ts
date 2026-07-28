@@ -11,8 +11,6 @@ export const memberFixture: Member = {
   cpf: '058.178.655-64',
   nascimento: '19/07/1993',
   estadoCivil: 'Casado',
-  validade: '31/12/2025',
   presidente: 'José Humberto S. Santos',
   secretario: 'Lucas de Souza Conceição',
-  qrCodeValue: 'https://copvasf.org.br/membro/2024003',
 };
