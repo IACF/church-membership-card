@@ -12,3 +12,15 @@ export function formatDate(iso: string): string {
   const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso ?? '');
   return m ? `${m[3]}/${m[2]}/${m[1]}` : (iso ?? '');
 }
+
+// '87999998888' → '(87) 99999-8888' (celular) ou '(87) 9999-8888' (fixo).
+export function formatPhone(phone: string): string {
+  const d = (phone ?? '').replace(/\D/g, '');
+  if (d.length === 11) {
+    return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+  }
+  if (d.length === 10) {
+    return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
+  }
+  return phone ?? '';
+}

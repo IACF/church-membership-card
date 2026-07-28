@@ -1,4 +1,4 @@
-import { formatCpf, formatDate } from './format';
+import { formatCpf, formatDate, formatPhone } from './format';
 
 describe('formatCpf', () => {
   it('formata 11 dígitos como CPF', () => {
@@ -18,5 +18,17 @@ describe('formatDate', () => {
   });
   it('devolve o original quando não casa o padrão', () => {
     expect(formatDate('19/07/1993')).toBe('19/07/1993');
+  });
+});
+
+describe('formatPhone', () => {
+  it('formata celular (11 dígitos)', () => {
+    expect(formatPhone('87999998888')).toBe('(87) 99999-8888');
+  });
+  it('formata fixo (10 dígitos)', () => {
+    expect(formatPhone('8733334444')).toBe('(87) 3333-4444');
+  });
+  it('devolve o original quando não casa', () => {
+    expect(formatPhone('123')).toBe('123');
   });
 });

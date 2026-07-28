@@ -1,31 +1,14 @@
-import {
-  ActivityIndicator,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useMember } from '@/hooks/useMember';
-import { useSession } from '@/hooks/useSession';
 import MembershipCard from '@/ui/card/MembershipCard';
 import { colors, spacing } from '@/theme/theme';
 
 export default function CarteirinhaScreen() {
-  const { logout } = useSession();
   const { data: member, isPending, isError, refetch } = useMember();
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.hello} numberOfLines={1}>
-          {member?.nomeCompleto ?? 'Minha carteirinha'}
-        </Text>
-        <Pressable testID="logout" onPress={() => void logout()}>
-          <Text style={styles.logout}>Sair</Text>
-        </Pressable>
-      </View>
-
+    <SafeAreaView style={styles.container} edges={['bottom']}>
       <View style={styles.center}>
         {isPending ? (
           <ActivityIndicator color={colors.accentBlue} />
@@ -50,25 +33,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-  },
-  hello: {
-    color: colors.card,
-    fontSize: 16,
-    fontWeight: '600',
-    flex: 1,
-  },
-  logout: {
-    color: colors.accentBlue,
-    fontSize: 15,
-    fontWeight: '600',
-    paddingHorizontal: spacing.sm,
   },
   center: {
     flex: 1,

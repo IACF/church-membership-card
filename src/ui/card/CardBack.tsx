@@ -18,8 +18,13 @@ export default function CardBack({ member }: Props) {
       <View style={styles.content}>
         <View style={styles.fieldWide}>
           <Text style={styles.fieldLabel}>Filiação:</Text>
-          <Text style={styles.fieldValue} numberOfLines={2}>
-            {member.filiacao}
+          {member.nomePai ? (
+            <Text style={styles.fieldValue} numberOfLines={1}>
+              {member.nomePai}
+            </Text>
+          ) : null}
+          <Text style={styles.fieldValue} numberOfLines={1}>
+            {member.nomeMae}
           </Text>
         </View>
 

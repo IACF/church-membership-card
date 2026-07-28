@@ -206,11 +206,23 @@ export interface components {
             cpf: string;
             /** @example 2024003 */
             registro: string;
+            /**
+             * @description WhatsApp em dígitos
+             * @example 87999998888
+             */
+            whatsapp: string;
             /** @example Pastor */
             funcao: string;
             /** @example Assembleia de Deus Ministério Logos */
             igreja: string;
-            /** @example Maria e Raimundo */
+            /** @example Raimundo Marques da Conceição */
+            nomePai?: string;
+            /** @example Maria Janete de Souza Conceição */
+            nomeMae: string;
+            /**
+             * @description Filiação derivada (pai e mãe) — exibida no perfil
+             * @example Raimundo Marques e Maria Janete
+             */
             filiacao: string;
             /**
              * @description YYYY-MM-DD
