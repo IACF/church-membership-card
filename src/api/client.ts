@@ -17,10 +17,16 @@ http.interceptors.request.use((config) => {
 });
 
 // 401 numa requisição autenticada = token expirado/inválido → encerra a sessão
-// (o guard reage e leva ao login). Auto-refresh fica para a Fase 5.
-http.interceptors.response.use(undefined, (error: AxiosError) => {
-  if (error.response?.status === 401 && useSessionStore.getState().isAuthenticated) {
+// (o guard reage e leva ao login). Erro de rede (sem `response`, offline) NÃO
+// desloga — preserva a sessão e o cache. Sem refresh (JWT de 30d).
+export function handleResponseError(error: AxiosError): Promise<never> {
+  if (
+    error.response?.status === 401 &&
+    useSessionStore.getState().isAuthenticated
+  ) {
     void useSessionStore.getState().clear();
   }
   return Promise.reject(error);
-});
+}
+
+http.interceptors.response.use(undefined, handleResponseError);

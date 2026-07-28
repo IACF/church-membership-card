@@ -9,30 +9,24 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useMember } from '@/hooks/useMember';
 import { formatCpf, formatDate, formatPhone } from '@/lib/format';
+import { toAppError } from '@/model/errors';
 import Button from '@/ui/components/Button';
 import { colors, spacing } from '@/theme/theme';
 
 export default function ProfileScreen() {
   const router = useRouter();
-  const { data: member, isPending, isError } = useMember();
+  const { data: member, isPending, error } = useMember();
 
-  if (isPending) {
+  // Prioriza o cache: só cai em loading/erro quando não há dados.
+  if (!member) {
     return (
       <SafeAreaView style={styles.container} edges={['bottom']}>
         <View style={styles.center}>
-          <ActivityIndicator color={colors.accentBlue} />
-        </View>
-      </SafeAreaView>
-    );
-  }
-
-  if (isError || !member) {
-    return (
-      <SafeAreaView style={styles.container} edges={['bottom']}>
-        <View style={styles.center}>
-          <Text style={styles.errorText}>
-            Não foi possível carregar o perfil.
-          </Text>
+          {isPending ? (
+            <ActivityIndicator color={colors.accentBlue} />
+          ) : (
+            <Text style={styles.errorText}>{toAppError(error).message}</Text>
+          )}
         </View>
       </SafeAreaView>
     );

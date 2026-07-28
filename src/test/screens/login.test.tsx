@@ -64,7 +64,7 @@ describe('LoginScreen', () => {
     expect(mockedLogin).toHaveBeenCalledWith('REG-1', '52998');
   });
 
-  it('erro 401: mostra mensagem genérica', async () => {
+  it('erro 401: mostra mensagem de credenciais', async () => {
     mockedLogin.mockRejectedValue({ response: { status: 401 } });
     renderScreen();
 
@@ -76,6 +76,20 @@ describe('LoginScreen', () => {
       expect(
         screen.getByText('Registro/CPF ou senha inválidos'),
       ).toBeOnTheScreen(),
+    );
+  });
+
+  it('sem conexão: mostra mensagem de rede', async () => {
+    const { AxiosError } = require('axios');
+    mockedLogin.mockRejectedValue(new AxiosError('offline', 'ERR_NETWORK'));
+    renderScreen();
+
+    fireEvent.changeText(screen.getByTestId('identifier'), 'REG-1');
+    fireEvent.changeText(screen.getByTestId('password'), '52998');
+    fireEvent.press(screen.getByTestId('submit'));
+
+    await waitFor(() =>
+      expect(screen.getByText('Sem conexão com a internet.')).toBeOnTheScreen(),
     );
   });
 });

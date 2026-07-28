@@ -1,28 +1,29 @@
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useMember } from '@/hooks/useMember';
+import { toAppError } from '@/model/errors';
 import MembershipCard from '@/ui/card/MembershipCard';
 import { colors, spacing } from '@/theme/theme';
 
 export default function CarteirinhaScreen() {
-  const { data: member, isPending, isError, refetch } = useMember();
+  const { data: member, isPending, error, refetch } = useMember();
 
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
       <View style={styles.center}>
-        {isPending ? (
+        {/* Prioriza o cache: se há dados (mesmo offline com refetch em erro),
+            mostra a carteirinha. Só exibe erro quando não há nada em cache. */}
+        {member ? (
+          <MembershipCard member={member} />
+        ) : isPending ? (
           <ActivityIndicator color={colors.accentBlue} />
-        ) : isError || !member ? (
+        ) : (
           <View style={styles.center}>
-            <Text style={styles.errorText}>
-              Não foi possível carregar sua carteirinha.
-            </Text>
+            <Text style={styles.errorText}>{toAppError(error).message}</Text>
             <Pressable testID="retry" onPress={() => void refetch()}>
               <Text style={styles.retry}>Tentar novamente</Text>
             </Pressable>
           </View>
-        ) : (
-          <MembershipCard member={member} />
         )}
       </View>
     </SafeAreaView>

@@ -1,9 +1,9 @@
-import { AxiosError } from 'axios';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLogin } from '@/hooks/useLogin';
+import { toAppError } from '@/model/errors';
 import Button from '@/ui/components/Button';
 import Input from '@/ui/components/Input';
 import { colors, spacing } from '@/theme/theme';
@@ -26,11 +26,13 @@ export default function LoginScreen() {
     setServerError(null);
     login.mutate(data, {
       onError: (e) => {
-        const status = (e as AxiosError)?.response?.status;
+        const appErr = toAppError(e);
         setServerError(
-          status === 401
-            ? 'Registro/CPF ou senha inválidos'
-            : 'Não foi possível entrar. Tente novamente.',
+          appErr.kind === 'network'
+            ? appErr.message
+            : appErr.kind === 'session-expired' // 401 no login = credenciais
+              ? 'Registro/CPF ou senha inválidos'
+              : 'Não foi possível entrar. Tente novamente.',
         );
       },
     });
