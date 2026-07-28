@@ -12,10 +12,14 @@ type Props = {
 };
 
 export default function CardFront({ member }: Props) {
+  const photoSource = member.photoUrl
+    ? { uri: member.photoUrl }
+    : require('../../../assets/photo.png');
+
   return (
     <>
       <LeftStrip height={CARD_H}>
-        <PhotoPlaceholder size={50} source={require('../../../assets/photo.png')} />
+        <PhotoPlaceholder size={50} source={photoSource} />
       </LeftStrip>
 
       <View style={styles.content}>
@@ -24,7 +28,7 @@ export default function CardFront({ member }: Props) {
 
         <View style={styles.divider} />
 
-        <Field label="Nome:" value={member.nome} />
+        <Field label="Nome:" value={member.nomeCompleto} />
         <Field label="Função/Cargo:" value={member.funcao} />
         <Field label="Registro:" value={member.registro} />
         <Field label="Igreja:" value={member.igreja} />

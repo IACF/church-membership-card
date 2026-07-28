@@ -1,14 +1,5 @@
-// Tipo provisório do membro (Fase 1). Na Fase 3 será substituído pelo tipo
-// gerado a partir do OpenAPI do servidor (church-membership-card-server).
-export interface Member {
-  nome: string;
-  funcao: string;
-  registro: string;
-  igreja: string;
-  filiacao: string;
-  cpf: string;
-  nascimento: string;
-  estadoCivil: string;
-  presidente: string;
-  secretario: string;
-}
+// Member = alias do tipo GERADO do OpenAPI (resposta de GET /members/me).
+// Nunca escrever o contrato à mão — regenerar com `gen:api` após mudar o endpoint.
+import type { components } from '@/api/api-types';
+
+export type Member = components['schemas']['MeResponseDto'];

@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native';
 import type { Member } from '@/model/member';
+import { formatCpf, formatDate } from '@/lib/format';
 import LeftStrip from './LeftStrip';
 
 const CARD_H = 215;
@@ -23,8 +24,8 @@ export default function CardBack({ member }: Props) {
         </View>
 
         <View style={styles.grid}>
-          <GridField label="CPF:" value={member.cpf} />
-          <GridField label="Nascimento:" value={member.nascimento} />
+          <GridField label="CPF:" value={formatCpf(member.cpf)} />
+          <GridField label="Nascimento:" value={formatDate(member.nascimento)} />
           <GridField label="Estado Civil:" value={member.estadoCivil} />
         </View>
 
