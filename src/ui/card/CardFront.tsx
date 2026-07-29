@@ -12,9 +12,8 @@ type Props = {
 };
 
 export default function CardFront({ member }: Props) {
-  const photoSource = member.photoUrl
-    ? { uri: member.photoUrl }
-    : require('../../../assets/photo.png');
+  // Sem foto → source undefined: o PhotoPlaceholder exibe o ícone padrão (thumbnail).
+  const photoSource = member.photoUrl ? { uri: member.photoUrl } : undefined;
 
   return (
     <>

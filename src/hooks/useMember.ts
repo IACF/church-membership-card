@@ -9,6 +9,10 @@ export function useMember() {
     queryKey: ['me'],
     queryFn: getMe,
     retry: false,
+    // Sempre rebusca ao montar (abrir/voltar à carteirinha) além do foco e do
+    // intervalo — assim edições do admin (ex.: nova foto) aparecem já na abertura,
+    // sem esperar o ciclo de 30s. O cache persistido segue exibido na hora (offline).
+    refetchOnMount: 'always',
     refetchOnWindowFocus: true,
     refetchInterval: 30_000,
   });
