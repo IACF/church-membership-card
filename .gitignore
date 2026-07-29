@@ -1,0 +1,19 @@
+node_modules/
+.expo/
+dist/
+web-build/
+android/
+ios/
+
+.env
+*.local
+
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+.DS_Store
+*.pem
+
+# Playwright MCP (snapshots/screenshots gerados na validação de UI)
+.playwright-mcp/
