@@ -7,6 +7,7 @@ export const colors = {
   card: '#f8fafc',
   textPrimary: '#1a202c',
   textSecondary: '#718096',
+  danger: '#dc2626',
 } as const;
 
 export const spacing = {
