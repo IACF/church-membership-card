@@ -68,6 +68,22 @@ export interface paths {
         patch: operations["MembersController_update"];
         trace?: never;
     };
+    "/admin/members/{id}/photo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["MembersController_setPhoto"];
+        delete: operations["MembersController_removePhoto"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/admin/members/{id}/reset-password": {
         parameters: {
             query?: never;
@@ -167,7 +183,6 @@ export interface components {
             estadoCivil: string;
             /** @default false */
             inadimplente: boolean;
-            photoUrl?: string;
         };
         UpdateMemberDto: {
             /** @example Lucas */
@@ -194,7 +209,6 @@ export interface components {
             estadoCivil?: string;
             /** @default false */
             inadimplente: boolean;
-            photoUrl?: string;
         };
         MeResponseDto: {
             /** @example João da Silva */
@@ -515,6 +529,51 @@ export interface operations {
                 "application/json": components["schemas"]["UpdateMemberDto"];
             };
         };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MembersController_setPhoto: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /** Format: binary */
+                    file?: string;
+                };
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MembersController_removePhoto: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             200: {
                 headers: {

@@ -57,12 +57,17 @@ export default function DrawerContent({ onClose }: Props) {
     },
   ];
 
-  const photo = member?.photoUrl ? { uri: member.photoUrl } : require('../../../assets/photo.png');
-
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.inner}>
       <View style={styles.header}>
-        <Image source={photo} style={styles.avatar} resizeMode="cover" />
+        {member?.photoUrl ? (
+          <Image source={{ uri: member.photoUrl }} style={styles.avatar} resizeMode="cover" />
+        ) : (
+          // Sem foto → avatar padrão (ícone de thumbnail).
+          <View style={[styles.avatar, styles.avatarFallback]}>
+            <Text style={styles.avatarIcon}>👤</Text>
+          </View>
+        )}
         <Text style={styles.nome} numberOfLines={2}>
           {member?.nomeCompleto ?? ''}
         </Text>
@@ -123,6 +128,16 @@ const styles = StyleSheet.create({
     height: 72,
     borderRadius: 36,
     marginBottom: 12,
+  },
+  avatarFallback: {
+    backgroundColor: '#334155',
+    borderWidth: 1.5,
+    borderColor: '#475569',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarIcon: {
+    fontSize: 34,
   },
   nome: {
     color: '#f1f5f9',
