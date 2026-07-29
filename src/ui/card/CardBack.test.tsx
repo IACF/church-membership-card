@@ -25,4 +25,10 @@ describe('CardBack', () => {
     expect(screen.queryByText('Raimundo Marques da Conceição')).not.toBeOnTheScreen();
     expect(screen.getByText('Maria Janete de Souza Conceição')).toBeOnTheScreen();
   });
+
+  it('exibe as imagens das assinaturas do presidente e do secretário', () => {
+    render(<CardBack member={memberFixture} />);
+    expect(screen.getByTestId('sig-presidente')).toBeOnTheScreen();
+    expect(screen.getByTestId('sig-secretario')).toBeOnTheScreen();
+  });
 });

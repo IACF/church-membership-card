@@ -1,10 +1,14 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet, type ImageSourcePropType } from 'react-native';
 import type { Member } from '@/model/member';
 import { formatCpf, formatDate } from '@/lib/format';
 import LeftStrip from './LeftStrip';
 
+// Assinaturas fixas (sempre as mesmas) — extraídas do modelo oficial do cliente.
+const ASSINATURA_PRESIDENTE = require('../../../assets/assinatura-presidente.png');
+const ASSINATURA_SECRETARIO = require('../../../assets/assinatura-secretario.png');
+
 const CARD_H = 215;
-const CONTENT_LEFT = 92;
+const CONTENT_LEFT = 94;
 
 type Props = {
   member: Member;
@@ -35,8 +39,18 @@ export default function CardBack({ member }: Props) {
         </View>
 
         <View style={styles.sigRow}>
-          <Signature name={member.presidente} role="Presidente do COPVASF" />
-          <Signature name={member.secretario} role="Secretário Geral do COPVASF" />
+          <Signature
+            name={member.presidente}
+            role="Presidente do COPVASF"
+            signature={ASSINATURA_PRESIDENTE}
+            testID="sig-presidente"
+          />
+          <Signature
+            name={member.secretario}
+            role="Secretário Geral do COPVASF"
+            signature={ASSINATURA_SECRETARIO}
+            testID="sig-secretario"
+          />
         </View>
 
         <Text style={styles.legal} numberOfLines={3}>
@@ -59,9 +73,20 @@ function GridField({ label, value }: { label: string; value: string }) {
   );
 }
 
-function Signature({ name, role }: { name: string; role: string }) {
+function Signature({
+  name,
+  role,
+  signature,
+  testID,
+}: {
+  name: string;
+  role: string;
+  signature: ImageSourcePropType;
+  testID: string;
+}) {
   return (
     <View style={styles.sig}>
+      <Image source={signature} style={styles.sigImage} resizeMode="contain" testID={testID} />
       <View style={styles.sigLine} />
       <Text style={styles.sigName} numberOfLines={1}>
         {name}
@@ -98,15 +123,15 @@ const styles = StyleSheet.create({
     marginBottom: 3,
   },
   fieldLabel: {
-    fontSize: 7,
+    fontSize: 9,
     color: '#718096',
-    lineHeight: 9,
+    lineHeight: 12,
   },
   fieldValue: {
-    fontSize: 8.5,
+    fontSize: 11.5,
     fontWeight: '700',
     color: '#1a202c',
-    lineHeight: 11,
+    lineHeight: 14,
   },
   sigRow: {
     flexDirection: 'row',
@@ -115,26 +140,31 @@ const styles = StyleSheet.create({
   sig: {
     flex: 1,
   },
+  sigImage: {
+    width: '100%',
+    height: 26,
+    marginBottom: 1,
+  },
   sigLine: {
     height: 1,
     backgroundColor: '#1a202c',
     marginBottom: 2,
   },
   sigName: {
-    fontSize: 7,
+    fontSize: 8,
     fontWeight: '700',
     color: '#1a202c',
-    lineHeight: 9,
+    lineHeight: 10,
   },
   sigRole: {
-    fontSize: 6.5,
+    fontSize: 7.5,
     color: '#718096',
-    lineHeight: 8.5,
+    lineHeight: 10,
   },
   legal: {
-    fontSize: 6,
+    fontSize: 7,
     color: '#718096',
     fontStyle: 'italic',
-    lineHeight: 8.5,
+    lineHeight: 9.5,
   },
 });
