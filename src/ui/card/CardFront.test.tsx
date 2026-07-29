@@ -11,4 +11,10 @@ describe('CardFront', () => {
     expect(screen.getByText('2024003')).toBeOnTheScreen();
     expect(screen.getByText('Assembleia de Deus Ministério Logos')).toBeOnTheScreen();
   });
+
+  it('exibe o brasão da República (imagem) e não o emoji de bandeira', () => {
+    render(<CardFront member={memberFixture} />);
+    expect(screen.getByTestId('brasao')).toBeOnTheScreen();
+    expect(screen.queryByText('🇧🇷')).toBeNull();
+  });
 });
