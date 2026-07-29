@@ -6,9 +6,7 @@ import * as memberApi from '@/api/member.api';
 import { memberFixture } from '@/model/member.fixture';
 
 jest.mock('@/api/member.api');
-const mockedGetMe = memberApi.getMe as jest.MockedFunction<
-  typeof memberApi.getMe
->;
+const mockedGetMe = memberApi.getMe as jest.MockedFunction<typeof memberApi.getMe>;
 
 function wrapper({ children }: { children: React.ReactNode }) {
   const client = new QueryClient({

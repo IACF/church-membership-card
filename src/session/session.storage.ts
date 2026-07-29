@@ -14,9 +14,7 @@ async function setItem(value: string): Promise<void> {
 }
 
 async function getItem(): Promise<string | null> {
-  return isWeb
-    ? AsyncStorage.getItem(SESSION_KEY)
-    : SecureStore.getItemAsync(SESSION_KEY);
+  return isWeb ? AsyncStorage.getItem(SESSION_KEY) : SecureStore.getItemAsync(SESSION_KEY);
 }
 
 async function removeItem(): Promise<void> {

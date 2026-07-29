@@ -1,10 +1,6 @@
 import { create } from 'zustand';
 import type { MemberBasic, Session } from '@/model/session';
-import {
-  clearSession,
-  loadSession,
-  saveSession,
-} from './session.storage';
+import { clearSession, loadSession, saveSession } from './session.storage';
 
 interface SessionState {
   token: string | null;

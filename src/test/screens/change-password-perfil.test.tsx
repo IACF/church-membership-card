@@ -1,10 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import {
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-} from '@testing-library/react-native';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import * as expoRouter from 'expo-router';
 import VoluntaryChangePassword from '../../../app/(app)/change-password';
 import * as authApi from '@/api/auth.api';
@@ -13,9 +8,7 @@ jest.mock('expo-router', () => ({ useRouter: jest.fn() }));
 jest.mock('@/api/auth.api');
 
 const back = jest.fn();
-const mockedChange = authApi.changePassword as jest.MockedFunction<
-  typeof authApi.changePassword
->;
+const mockedChange = authApi.changePassword as jest.MockedFunction<typeof authApi.changePassword>;
 
 function renderScreen() {
   const client = new QueryClient({
@@ -43,9 +36,7 @@ describe('Troca voluntária de senha (Perfil)', () => {
     fireEvent.changeText(screen.getByTestId('confirmNewPassword'), 'nova-senha-1');
     fireEvent.press(screen.getByTestId('submit'));
 
-    await waitFor(() =>
-      expect(screen.getByTestId('change-success')).toBeOnTheScreen(),
-    );
+    await waitFor(() => expect(screen.getByTestId('change-success')).toBeOnTheScreen());
     expect(mockedChange).toHaveBeenCalledWith('52998', 'nova-senha-1');
 
     fireEvent.press(screen.getByTestId('back'));

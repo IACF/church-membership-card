@@ -10,9 +10,7 @@ export default function ForcedChangePasswordScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.body}>
         <Text style={styles.title}>Defina sua nova senha</Text>
-        <Text style={styles.subtitle}>
-          No primeiro acesso é necessário trocar a senha padrão.
-        </Text>
+        <Text style={styles.subtitle}>No primeiro acesso é necessário trocar a senha padrão.</Text>
         <PasswordChangeForm submitLabel="Salvar nova senha" />
       </View>
     </SafeAreaView>

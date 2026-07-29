@@ -31,8 +31,6 @@ describe('CarteirinhaScreen (resiliência)', () => {
     });
 
     render(<CarteirinhaScreen />);
-    expect(
-      screen.getByText('Sem conexão com a internet.'),
-    ).toBeOnTheScreen();
+    expect(screen.getByText('Sem conexão com a internet.')).toBeOnTheScreen();
   });
 });

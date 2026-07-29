@@ -1,10 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import {
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-} from '@testing-library/react-native';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import React from 'react';
 import LoginScreen from '../../../app/(auth)/login';
 import * as authApi from '@/api/auth.api';
@@ -40,9 +35,7 @@ describe('LoginScreen', () => {
     renderScreen();
     fireEvent.press(screen.getByTestId('submit'));
 
-    await waitFor(() =>
-      expect(screen.getByText('Informe o registro ou CPF')).toBeOnTheScreen(),
-    );
+    await waitFor(() => expect(screen.getByText('Informe o registro ou CPF')).toBeOnTheScreen());
     expect(mockedLogin).not.toHaveBeenCalled();
   });
 
@@ -58,9 +51,7 @@ describe('LoginScreen', () => {
     fireEvent.changeText(screen.getByTestId('password'), '52998');
     fireEvent.press(screen.getByTestId('submit'));
 
-    await waitFor(() =>
-      expect(useSessionStore.getState().isAuthenticated).toBe(true),
-    );
+    await waitFor(() => expect(useSessionStore.getState().isAuthenticated).toBe(true));
     expect(mockedLogin).toHaveBeenCalledWith('REG-1', '52998');
   });
 
@@ -73,9 +64,7 @@ describe('LoginScreen', () => {
     fireEvent.press(screen.getByTestId('submit'));
 
     await waitFor(() =>
-      expect(
-        screen.getByText('Registro/CPF ou senha inválidos'),
-      ).toBeOnTheScreen(),
+      expect(screen.getByText('Registro/CPF ou senha inválidos')).toBeOnTheScreen(),
     );
   });
 
@@ -88,8 +77,6 @@ describe('LoginScreen', () => {
     fireEvent.changeText(screen.getByTestId('password'), '52998');
     fireEvent.press(screen.getByTestId('submit'));
 
-    await waitFor(() =>
-      expect(screen.getByText('Sem conexão com a internet.')).toBeOnTheScreen(),
-    );
+    await waitFor(() => expect(screen.getByText('Sem conexão com a internet.')).toBeOnTheScreen());
   });
 });

@@ -19,9 +19,7 @@ describe('handleResponseError (interceptor)', () => {
     const err = { response: { status: 401 } } as AxiosError;
     await expect(handleResponseError(err)).rejects.toBe(err);
     // clear() é assíncrono (limpa o storage antes de zerar o estado)
-    await waitFor(() =>
-      expect(useSessionStore.getState().isAuthenticated).toBe(false),
-    );
+    await waitFor(() => expect(useSessionStore.getState().isAuthenticated).toBe(false));
   });
 
   it('erro de rede (sem response) → mantém a sessão', async () => {

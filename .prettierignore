@@ -1,0 +1,12 @@
+node_modules
+.expo
+dist
+web-build
+android
+ios
+coverage
+package-lock.json
+# gerado do OpenAPI — não formatar
+src/api/api-types.ts
+# docs em markdown são prosa — não impor estilo de código
+**/*.md

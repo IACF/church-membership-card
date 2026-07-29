@@ -15,10 +15,8 @@ jest.mock('expo-secure-store', () => {
   };
 });
 
-jest.mock(
-  '@react-native-async-storage/async-storage',
-  () =>
-    require('@react-native-async-storage/async-storage/jest/async-storage-mock'),
+jest.mock('@react-native-async-storage/async-storage', () =>
+  require('@react-native-async-storage/async-storage/jest/async-storage-mock'),
 );
 
 // SafeAreaProvider/SafeAreaView sem métricas de tela no ambiente de teste.
@@ -29,13 +27,8 @@ jest.mock('react-native-safe-area-context', () => {
   return {
     SafeAreaProvider: ({ children }: { children: React.ReactNode }) =>
       React.createElement(View, null, children),
-    SafeAreaView: ({
-      children,
-      style,
-    }: {
-      children: React.ReactNode;
-      style?: unknown;
-    }) => React.createElement(View, { style }, children),
+    SafeAreaView: ({ children, style }: { children: React.ReactNode; style?: unknown }) =>
+      React.createElement(View, { style }, children),
     useSafeAreaInsets: () => inset,
   };
 });

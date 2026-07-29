@@ -9,8 +9,6 @@ describe('CardFront', () => {
     expect(screen.getByText('Lucas de Souza Conceição')).toBeOnTheScreen();
     expect(screen.getByText('Pastor')).toBeOnTheScreen();
     expect(screen.getByText('2024003')).toBeOnTheScreen();
-    expect(
-      screen.getByText('Assembleia de Deus Ministério Logos'),
-    ).toBeOnTheScreen();
+    expect(screen.getByText('Assembleia de Deus Ministério Logos')).toBeOnTheScreen();
   });
 });

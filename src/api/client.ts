@@ -20,10 +20,7 @@ http.interceptors.request.use((config) => {
 // (o guard reage e leva ao login). Erro de rede (sem `response`, offline) NÃO
 // desloga — preserva a sessão e o cache. Sem refresh (JWT de 30d).
 export function handleResponseError(error: AxiosError): Promise<never> {
-  if (
-    error.response?.status === 401 &&
-    useSessionStore.getState().isAuthenticated
-  ) {
+  if (error.response?.status === 401 && useSessionStore.getState().isAuthenticated) {
     void useSessionStore.getState().clear();
   }
   return Promise.reject(error);

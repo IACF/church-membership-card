@@ -21,17 +21,10 @@ export default function VoluntaryChangePasswordScreen() {
             <Text style={styles.success} testID="change-success">
               Senha alterada com sucesso.
             </Text>
-            <Button
-              title="Voltar ao perfil"
-              testID="back"
-              onPress={() => router.back()}
-            />
+            <Button title="Voltar ao perfil" testID="back" onPress={() => router.back()} />
           </View>
         ) : (
-          <PasswordChangeForm
-            submitLabel="Salvar"
-            onSuccess={() => setDone(true)}
-          />
+          <PasswordChangeForm submitLabel="Salvar" onSuccess={() => setDone(true)} />
         )}
       </View>
     </SafeAreaView>

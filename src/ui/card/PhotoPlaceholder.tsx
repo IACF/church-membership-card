@@ -10,11 +10,7 @@ export default function PhotoPlaceholder({ size = 50, source }: Props) {
 
   if (source) {
     return (
-      <Image
-        source={source}
-        style={{ width: size, height, borderRadius: 4 }}
-        resizeMode="cover"
-      />
+      <Image source={source} style={{ width: size, height, borderRadius: 4 }} resizeMode="cover" />
     );
   }
 

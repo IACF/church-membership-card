@@ -23,10 +23,7 @@ function useProtectedRoute() {
 
   useEffect(() => {
     if (!hydrated) return;
-    const target = resolveRedirect(
-      { isAuthenticated, mustChangePassword },
-      segments,
-    );
+    const target = resolveRedirect({ isAuthenticated, mustChangePassword }, segments);
     if (target) {
       router.replace(target as never);
     }

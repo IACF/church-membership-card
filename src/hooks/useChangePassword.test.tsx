@@ -6,9 +6,7 @@ import { useSessionStore } from '@/session/session.store';
 import * as authApi from '@/api/auth.api';
 
 jest.mock('@/api/auth.api');
-const mockedChange = authApi.changePassword as jest.MockedFunction<
-  typeof authApi.changePassword
->;
+const mockedChange = authApi.changePassword as jest.MockedFunction<typeof authApi.changePassword>;
 
 function wrapper({ children }: { children: React.ReactNode }) {
   const client = new QueryClient({

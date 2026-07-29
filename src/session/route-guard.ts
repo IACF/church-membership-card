@@ -7,10 +7,7 @@ export interface GuardState {
   mustChangePassword: boolean;
 }
 
-export function resolveRedirect(
-  state: GuardState,
-  segments: string[],
-): string | null {
+export function resolveRedirect(state: GuardState, segments: string[]): string | null {
   const inAuthGroup = segments[0] === '(auth)';
   const inAppGroup = segments[0] === '(app)';
   const onChangePw = inAuthGroup && segments[1] === 'change-password';

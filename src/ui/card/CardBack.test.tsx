@@ -16,21 +16,13 @@ describe('CardBack', () => {
 
   it('filiação lista pai e mãe (nomes separados, empilhados)', () => {
     render(<CardBack member={memberFixture} />);
-    expect(
-      screen.getByText('Raimundo Marques da Conceição'),
-    ).toBeOnTheScreen();
-    expect(
-      screen.getByText('Maria Janete de Souza Conceição'),
-    ).toBeOnTheScreen();
+    expect(screen.getByText('Raimundo Marques da Conceição')).toBeOnTheScreen();
+    expect(screen.getByText('Maria Janete de Souza Conceição')).toBeOnTheScreen();
   });
 
   it('sem nome do pai, exibe apenas o nome da mãe', () => {
     render(<CardBack member={{ ...memberFixture, nomePai: undefined }} />);
-    expect(
-      screen.queryByText('Raimundo Marques da Conceição'),
-    ).not.toBeOnTheScreen();
-    expect(
-      screen.getByText('Maria Janete de Souza Conceição'),
-    ).toBeOnTheScreen();
+    expect(screen.queryByText('Raimundo Marques da Conceição')).not.toBeOnTheScreen();
+    expect(screen.getByText('Maria Janete de Souza Conceição')).toBeOnTheScreen();
   });
 });

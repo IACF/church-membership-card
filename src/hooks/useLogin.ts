@@ -10,8 +10,7 @@ interface LoginVars {
 export function useLogin() {
   const setSession = useSessionStore((s) => s.setSession);
   return useMutation({
-    mutationFn: ({ identifier, password }: LoginVars) =>
-      login(identifier, password),
+    mutationFn: ({ identifier, password }: LoginVars) => login(identifier, password),
     onSuccess: async (data) => {
       await setSession({
         token: data.token,

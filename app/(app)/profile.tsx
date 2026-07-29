@@ -1,11 +1,5 @@
 import { useRouter } from 'expo-router';
-import {
-  ActivityIndicator,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useMember } from '@/hooks/useMember';
 import { formatCpf, formatDate, formatPhone } from '@/lib/format';

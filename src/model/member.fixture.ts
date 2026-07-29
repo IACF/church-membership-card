@@ -11,8 +11,7 @@ export const memberFixture: Member = {
   igreja: 'Assembleia de Deus Ministério Logos',
   nomePai: 'Raimundo Marques da Conceição',
   nomeMae: 'Maria Janete de Souza Conceição',
-  filiacao:
-    'Raimundo Marques da Conceição e Maria Janete de Souza Conceição',
+  filiacao: 'Raimundo Marques da Conceição e Maria Janete de Souza Conceição',
   nascimento: '1993-07-19',
   estadoCivil: 'Casado(a)',
   inadimplente: false,

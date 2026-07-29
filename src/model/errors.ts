@@ -2,11 +2,7 @@ import axios from 'axios';
 
 // Erros do app, classificados a partir do erro cru (Axios) — a UI consome estes
 // tipos, não o erro técnico.
-export type AppErrorKind =
-  | 'network'
-  | 'session-expired'
-  | 'not-found'
-  | 'unknown';
+export type AppErrorKind = 'network' | 'session-expired' | 'not-found' | 'unknown';
 
 export interface AppError {
   kind: AppErrorKind;
@@ -33,10 +29,7 @@ function statusOf(error: unknown): number | undefined {
 
 export function toAppError(error: unknown): AppError {
   // Falha de rede/offline: erro do Axios sem `response` (ou ERR_NETWORK).
-  if (
-    axios.isAxiosError(error) &&
-    (!error.response || error.code === 'ERR_NETWORK')
-  ) {
+  if (axios.isAxiosError(error) && (!error.response || error.code === 'ERR_NETWORK')) {
     return appError('network');
   }
   const status = statusOf(error);

@@ -64,7 +64,7 @@ export default function MembershipCard({ member }: Props) {
           </Animated.View>
         </View>
       </TouchableOpacity>
-      <Text style={s.hint}>↻  Toque para virar</Text>
+      <Text style={s.hint}>↻ Toque para virar</Text>
     </View>
   );
 }

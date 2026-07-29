@@ -46,9 +46,7 @@ describe('session store', () => {
   });
 
   it('markPasswordChanged: zera mustChangePassword e persiste', async () => {
-    await useSessionStore
-      .getState()
-      .setSession({ ...sample, mustChangePassword: true });
+    await useSessionStore.getState().setSession({ ...sample, mustChangePassword: true });
 
     await useSessionStore.getState().markPasswordChanged();
 

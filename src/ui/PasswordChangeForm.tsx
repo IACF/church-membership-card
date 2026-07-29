@@ -5,7 +5,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { useChangePassword } from '@/hooks/useChangePassword';
 import Button from '@/ui/components/Button';
 import Input from '@/ui/components/Input';
-import { colors, spacing } from '@/theme/theme';
+import { spacing } from '@/theme/theme';
 
 interface ChangePasswordForm {
   currentPassword: string;
@@ -20,10 +20,7 @@ type Props = {
 
 // Formulário de troca de senha reutilizado no 1º acesso (obrigatório) e no Perfil
 // (voluntário). Regras: nova ≥ 6, ≠ atual, confirmação igual. Usa /auth/change-password.
-export default function PasswordChangeForm({
-  submitLabel = 'Salvar',
-  onSuccess,
-}: Props) {
+export default function PasswordChangeForm({ submitLabel = 'Salvar', onSuccess }: Props) {
   const {
     control,
     handleSubmit,
@@ -79,8 +76,7 @@ export default function PasswordChangeForm({
           required: 'Informe a nova senha',
           minLength: { value: 6, message: 'Mínimo de 6 caracteres' },
           validate: (v) =>
-            v !== getValues('currentPassword') ||
-            'A nova senha deve ser diferente da atual',
+            v !== getValues('currentPassword') || 'A nova senha deve ser diferente da atual',
         }}
         render={({ field: { onChange, value } }) => (
           <Input
@@ -99,8 +95,7 @@ export default function PasswordChangeForm({
         name="confirmNewPassword"
         rules={{
           required: 'Confirme a nova senha',
-          validate: (v) =>
-            v === getValues('newPassword') || 'As senhas não coincidem',
+          validate: (v) => v === getValues('newPassword') || 'As senhas não coincidem',
         }}
         render={({ field: { onChange, value } }) => (
           <Input

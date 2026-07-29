@@ -1,19 +1,12 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import {
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-} from '@testing-library/react-native';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import React from 'react';
 import ChangePasswordScreen from '../../../app/(auth)/change-password';
 import * as authApi from '@/api/auth.api';
 import { useSessionStore } from '@/session/session.store';
 
 jest.mock('@/api/auth.api');
-const mockedChange = authApi.changePassword as jest.MockedFunction<
-  typeof authApi.changePassword
->;
+const mockedChange = authApi.changePassword as jest.MockedFunction<typeof authApi.changePassword>;
 
 function renderScreen() {
   const client = new QueryClient({
@@ -45,9 +38,7 @@ describe('ChangePasswordScreen', () => {
     fireEvent.changeText(screen.getByTestId('confirmNewPassword'), 'abc');
     fireEvent.press(screen.getByTestId('submit'));
 
-    await waitFor(() =>
-      expect(screen.getByText('Mínimo de 6 caracteres')).toBeOnTheScreen(),
-    );
+    await waitFor(() => expect(screen.getByText('Mínimo de 6 caracteres')).toBeOnTheScreen());
     expect(mockedChange).not.toHaveBeenCalled();
   });
 
@@ -58,9 +49,7 @@ describe('ChangePasswordScreen', () => {
     fireEvent.changeText(screen.getByTestId('confirmNewPassword'), 'outra-senha');
     fireEvent.press(screen.getByTestId('submit'));
 
-    await waitFor(() =>
-      expect(screen.getByText('As senhas não coincidem')).toBeOnTheScreen(),
-    );
+    await waitFor(() => expect(screen.getByText('As senhas não coincidem')).toBeOnTheScreen());
     expect(mockedChange).not.toHaveBeenCalled();
   });
 
@@ -73,9 +62,7 @@ describe('ChangePasswordScreen', () => {
     fireEvent.changeText(screen.getByTestId('confirmNewPassword'), 'nova-senha-1');
     fireEvent.press(screen.getByTestId('submit'));
 
-    await waitFor(() =>
-      expect(useSessionStore.getState().mustChangePassword).toBe(false),
-    );
+    await waitFor(() => expect(useSessionStore.getState().mustChangePassword).toBe(false));
     expect(mockedChange).toHaveBeenCalledWith('52998', 'nova-senha-1');
   });
 
@@ -88,8 +75,6 @@ describe('ChangePasswordScreen', () => {
     fireEvent.changeText(screen.getByTestId('confirmNewPassword'), 'nova-senha-1');
     fireEvent.press(screen.getByTestId('submit'));
 
-    await waitFor(() =>
-      expect(screen.getByText('Senha atual incorreta')).toBeOnTheScreen(),
-    );
+    await waitFor(() => expect(screen.getByText('Senha atual incorreta')).toBeOnTheScreen());
   });
 });

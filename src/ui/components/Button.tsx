@@ -9,13 +9,7 @@ type Props = {
   testID?: string;
 };
 
-export default function Button({
-  title,
-  onPress,
-  loading,
-  disabled,
-  testID,
-}: Props) {
+export default function Button({ title, onPress, loading, disabled, testID }: Props) {
   const isDisabled = disabled || loading;
   return (
     <Pressable

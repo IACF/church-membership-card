@@ -1,12 +1,5 @@
 import { useRouter, useSegments } from 'expo-router';
-import {
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useMember } from '@/hooks/useMember';
 import { useSession } from '@/hooks/useSession';
 
@@ -64,9 +57,7 @@ export default function DrawerContent({ onClose }: Props) {
     },
   ];
 
-  const photo = member?.photoUrl
-    ? { uri: member.photoUrl }
-    : require('../../../assets/photo.png');
+  const photo = member?.photoUrl ? { uri: member.photoUrl } : require('../../../assets/photo.png');
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.inner}>
@@ -75,9 +66,7 @@ export default function DrawerContent({ onClose }: Props) {
         <Text style={styles.nome} numberOfLines={2}>
           {member?.nomeCompleto ?? ''}
         </Text>
-        {member?.registro ? (
-          <Text style={styles.registro}>Registro: {member.registro}</Text>
-        ) : null}
+        {member?.registro ? <Text style={styles.registro}>Registro: {member.registro}</Text> : null}
       </View>
 
       <View style={styles.divider} />
