@@ -50,6 +50,14 @@ export default function ProfileScreen() {
           </View>
         ))}
 
+        {/* Situação de inadimplência: destaque em vermelho quando inadimplente. */}
+        <View style={styles.row}>
+          <Text style={styles.label}>Situação</Text>
+          <Text style={[styles.value, member.inadimplente && styles.valueDanger]}>
+            {member.inadimplente ? 'Inadimplente' : 'Em dia'}
+          </Text>
+        </View>
+
         <View style={styles.actions}>
           <Button
             title="Alterar senha"
@@ -100,6 +108,10 @@ const styles = StyleSheet.create({
     color: colors.card,
     fontSize: 15,
     marginTop: 2,
+  },
+  valueDanger: {
+    color: colors.danger,
+    fontWeight: '700',
   },
   actions: {
     marginTop: spacing.xl,

@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, Animated, StyleSheet } from 'react-native
 import type { Member } from '@/model/member';
 import CardFront from './CardFront';
 import CardBack from './CardBack';
+import DelinquencyBanner from './DelinquencyBanner';
 
 type Props = {
   member: Member;
@@ -62,6 +63,9 @@ export default function MembershipCard({ member }: Props) {
           >
             <CardBack member={member} />
           </Animated.View>
+
+          {/* Tarja de inadimplência: por cima das faces (fora do flip). */}
+          {member.inadimplente ? <DelinquencyBanner /> : null}
         </View>
       </TouchableOpacity>
       <Text style={s.hint}>↻ Toque para virar</Text>

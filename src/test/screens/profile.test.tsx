@@ -42,4 +42,31 @@ describe('ProfileScreen', () => {
     fireEvent.press(screen.getByTestId('change-password'));
     expect(push).toHaveBeenCalledWith('/(app)/change-password');
   });
+
+  it('exibe "Em dia" quando o membro não é inadimplente', () => {
+    render(<ProfileScreen />);
+    expect(screen.getByText('Situação')).toBeOnTheScreen();
+    expect(screen.getByText('Em dia')).toBeOnTheScreen();
+  });
+
+  it('exibe "Inadimplente" quando o membro está inadimplente', () => {
+    (useMember as jest.Mock).mockReturnValue({
+      isPending: false,
+      isError: false,
+      data: {
+        nomeCompleto: 'Fulano Teste',
+        registro: 'REG-1',
+        funcao: 'Pastor',
+        igreja: 'Central',
+        filiacao: 'Pai e Mae',
+        cpf: '52998224725',
+        nascimento: '1990-05-20',
+        estadoCivil: 'Casado(a)',
+        whatsapp: '87999998888',
+        inadimplente: true,
+      },
+    });
+    render(<ProfileScreen />);
+    expect(screen.getByText('Inadimplente')).toBeOnTheScreen();
+  });
 });
