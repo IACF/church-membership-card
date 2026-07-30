@@ -8,6 +8,7 @@ export const memberFixture: Member = {
   registro: '2024003',
   whatsapp: '87999998888',
   funcao: 'Pastor',
+  cargo: 'Presidente do Conselho de Pastores do Vale do São Francisco',
   igreja: 'Assembleia de Deus Ministério Logos',
   nomePai: 'Raimundo Marques da Conceição',
   nomeMae: 'Maria Janete de Souza Conceição',
@@ -15,6 +16,7 @@ export const memberFixture: Member = {
   nascimento: '1993-07-19',
   estadoCivil: 'Casado(a)',
   inadimplente: false,
+  cnpj: '66.551.138/0001-97',
   presidente: 'José Humberto S. Santos',
   secretario: 'Lucas de Souza Conceição',
 };

@@ -29,7 +29,8 @@ export default function ProfileScreen() {
   const rows: [string, string][] = [
     ['Nome', member.nomeCompleto],
     ['Registro', member.registro],
-    ['Função/Cargo', member.funcao],
+    ['Função', member.funcao],
+    ['Cargo', member.cargo ?? '—'],
     ['Igreja', member.igreja],
     ['Filiação', member.filiacao],
     ['CPF', formatCpf(member.cpf)],
