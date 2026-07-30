@@ -148,6 +148,70 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/admin/documents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["DocumentsController_findAll"];
+        put?: never;
+        post: operations["DocumentsController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/documents/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["DocumentsController_findOne"];
+        put?: never;
+        post?: never;
+        delete: operations["DocumentsController_remove"];
+        options?: never;
+        head?: never;
+        patch: operations["DocumentsController_update"];
+        trace?: never;
+    };
+    "/admin/documents/{id}/file": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["DocumentsController_replaceFile"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/documents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["DocumentsPublicController_findByLocation"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -286,6 +350,40 @@ export interface components {
             currentPassword: string;
             /** @example minha-nova-senha */
             newPassword: string;
+        };
+        DocumentDto: {
+            /** @example 507f1f77bcf86cd799439011 */
+            id: string;
+            /** @example Estatuto do COPVASF */
+            title: string;
+            /** @example Versão vigente aprovada em assembleia. */
+            description?: string;
+            /**
+             * @example documentos
+             * @enum {string}
+             */
+            location: "documentos" | "informacoes-conselho";
+            /** @example https://api.copvasf.org.br/uploads/documents/abc.pdf?v=1690000000000 */
+            fileUrl: string;
+            /** @example estatuto.pdf */
+            fileName: string;
+            /** @example 234567 */
+            fileSize: number;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        UpdateDocumentDto: {
+            /** @example Estatuto do COPVASF */
+            title?: string;
+            /** @example Versão vigente aprovada em assembleia. */
+            description?: string;
+            /**
+             * @example informacoes-conselho
+             * @enum {string}
+             */
+            location?: "documentos" | "informacoes-conselho";
         };
     };
     responses: never;
@@ -670,6 +768,171 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    DocumentsController_findAll: {
+        parameters: {
+            query: {
+                location: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DocumentDto"][];
+                };
+            };
+        };
+    };
+    DocumentsController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    title: string;
+                    description?: string;
+                    /** @enum {string} */
+                    location: "documentos" | "informacoes-conselho";
+                    /** Format: binary */
+                    file: string;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DocumentDto"];
+                };
+            };
+        };
+    };
+    DocumentsController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DocumentDto"];
+                };
+            };
+        };
+    };
+    DocumentsController_remove: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    DocumentsController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateDocumentDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DocumentDto"];
+                };
+            };
+        };
+    };
+    DocumentsController_replaceFile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /** Format: binary */
+                    file?: string;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DocumentDto"];
+                };
+            };
+        };
+    };
+    DocumentsPublicController_findByLocation: {
+        parameters: {
+            query: {
+                location: "documentos" | "informacoes-conselho";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DocumentDto"][];
+                };
             };
         };
     };

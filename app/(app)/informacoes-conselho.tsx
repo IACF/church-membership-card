@@ -1,5 +1,5 @@
-import ComingSoon from '@/ui/ComingSoon';
+import DocumentList from '@/ui/documents/DocumentList';
 
 export default function InformacoesConselhoScreen() {
-  return <ComingSoon title="Informações do conselho" />;
+  return <DocumentList location="informacoes-conselho" />;
 }
