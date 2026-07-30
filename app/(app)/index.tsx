@@ -3,6 +3,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useMember } from '@/hooks/useMember';
 import { toAppError } from '@/model/errors';
 import MembershipCard from '@/ui/card/MembershipCard';
+import ExportPdfButton from '@/ui/card/ExportPdfButton';
 import { colors, spacing } from '@/theme/theme';
 
 export default function CarteirinhaScreen() {
@@ -14,7 +15,10 @@ export default function CarteirinhaScreen() {
         {/* Prioriza o cache: se há dados (mesmo offline com refetch em erro),
             mostra a carteirinha. Só exibe erro quando não há nada em cache. */}
         {member ? (
-          <MembershipCard member={member} />
+          <>
+            <MembershipCard member={member} />
+            <ExportPdfButton member={member} />
+          </>
         ) : isPending ? (
           <ActivityIndicator color={colors.accentBlue} />
         ) : (
