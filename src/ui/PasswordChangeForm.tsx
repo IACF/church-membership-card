@@ -41,10 +41,16 @@ export default function PasswordChangeForm({ submitLabel = 'Salvar', onSuccess }
     changePassword.mutate(data, {
       onSuccess: () => onSuccess?.(),
       onError: (e) => {
-        const status = (e as AxiosError)?.response?.status;
+        // O server devolve 422 para erros de validação da senha (senha atual
+        // incorreta, nova == atual), cada um com sua mensagem — exibimos a do
+        // server e mantemos a tela. 401 fica só para token inválido (o
+        // interceptor desloga), então não cai aqui. Ver spec `troca-senha`.
+        const err = e as AxiosError<{ message?: string }>;
+        const status = err?.response?.status;
+        const serverMessage = err?.response?.data?.message;
         setServerError(
-          status === 401
-            ? 'Senha atual incorreta'
+          status === 422 && serverMessage
+            ? serverMessage
             : 'Não foi possível alterar a senha. Tente novamente.',
         );
       },
