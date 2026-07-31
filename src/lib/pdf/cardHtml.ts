@@ -1,5 +1,6 @@
 import type { Member } from '@/model/member';
 import { formatCpf, formatDate } from '@/lib/format';
+import { fitCargoFontSize } from '@/ui/card/cardBase';
 
 // Assets do PDF resolvidos como data URI base64 (ver assets.ts). A foto é
 // opcional: ausente → placeholder (mesma caixa 👤 do PhotoPlaceholder).
@@ -60,14 +61,19 @@ function photoFront(assets: CardAssets): string {
   return `<div class="photo-ph">👤</div>`;
 }
 
-function field(label: string, value: string): string {
+function field(label: string, value: string, lines = 1): string {
+  const valueClass = lines > 1 ? 'f-value f-value--multi' : 'f-value';
   return `<div class="field">
     <div class="f-label">${esc(label)}</div>
-    <div class="f-value">${esc(value)}</div>
+    <div class="${valueClass}">${esc(value)}</div>
   </div>`;
 }
 
 function front(member: Member, assets: CardAssets, qrSvg: string): string {
+  // Função/Cargo combinados (como no CardFront): "funcao - cargo" quando há cargo.
+  // Fonte diminui p/ caber em 2 linhas (fitCargoFontSize) — mesmo cálculo da tela.
+  const funcaoCargo = member.cargo ? `${member.funcao} - ${member.cargo}` : member.funcao;
+  const fcFont = fitCargoFontSize(funcaoCargo);
   return `<div class="card">
     ${leftStrip('front')}
     <div class="photo-wrap">${photoFront(assets)}</div>
@@ -76,18 +82,24 @@ function front(member: Member, assets: CardAssets, qrSvg: string): string {
       <div class="title-main">CONSELHO DE PASTORES</div>
       <div class="title-sub">Do Vale do São Francisco</div>
     </div>
-    <div class="body-front">
-      ${field('Nome:', member.nomeCompleto)}
-      ${field('Função/Cargo:', member.funcao)}
-      ${field('Registro:', member.registro)}
-      ${field('Igreja:', member.igreja)}
-    </div>
     <img class="logo" src="${assets.logo}" alt="" />
+    <div class="content-front">
+      ${field('Nome:', member.nomeCompleto)}
+      <div class="field">
+        <div class="f-label">Função/Cargo:</div>
+        <div class="f-value fc-value" style="font-size:${fcFont}px;line-height:${fcFont + 2}px">${esc(funcaoCargo)}</div>
+      </div>
+      ${field('Registro:', member.registro)}
+      ${field('Igreja:', member.igreja, 2)}
+      <div class="front-footer">
+        <div class="versiculo">"Um ao outro ajudou e ao seu companheiro disse: Esforça-te! (Is 41.6)"</div>
+        ${member.cnpj ? `<div class="cnpj">CNPJ: ${esc(member.cnpj)}</div>` : ''}
+      </div>
+    </div>
     <div class="qr-wrap">
       <div class="qr">${qrSvg}</div>
       <div class="qr-label">AUTENTICIDADE</div>
     </div>
-    <div class="versiculo">"Um ao outro ajudou e ao seu companheiro disse: Esforça-te! (Is 41.6)"</div>
     ${member.inadimplente ? tarja() : ''}
   </div>`;
 }
@@ -175,19 +187,25 @@ export function buildCardHtml(member: Member, assets: CardAssets, qrSvg: string)
     border: 1.5px solid #718096; display: flex; align-items: center; justify-content: center; font-size: 24px;
   }
   .brasao { position: absolute; left: 8px; bottom: 6px; width: 44px; height: 44px; object-fit: contain; }
-  .header { position: absolute; top: 16px; left: 84px; right: 8px; }
-  .title-main { font-size: 15px; font-weight: 800; color: #3a4658; letter-spacing: 0.5px; }
-  .title-sub { font-size: 12.5px; font-weight: 700; color: #4a5568; margin-top: 1px; }
-  .body-front { position: absolute; top: 52px; left: 78px; right: 72px; }
-  .field { margin-bottom: 4px; }
-  .f-label { font-size: 9px; color: #718096; line-height: 11px; }
+  .header { position: absolute; top: 16px; left: 84px; right: 8px; text-align: center; }
+  .title-main { font-size: 15px; font-weight: 800; color: #3a4658; letter-spacing: 0.5px; text-transform: uppercase; }
+  .title-sub { font-size: 12.5px; font-weight: 700; color: #4a5568; margin-top: 1px; text-transform: uppercase; }
+  /* Coluna em fluxo entre o título e a base (como o CardFront): campos fluem do
+     topo; o rodapé (versículo + CNPJ) é empurrado para baixo por margin-top:auto. */
+  .content-front { position: absolute; top: 42px; left: 78px; right: 72px; bottom: 5px; display: flex; flex-direction: column; }
+  .field { margin-bottom: 1px; }
+  .f-label { font-size: 9px; color: #718096; line-height: 10px; }
   .f-value { font-size: 13px; font-weight: 700; color: #2d3748; line-height: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .f-value--multi { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .fc-value { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .front-footer { margin-top: auto; }
   .logo { position: absolute; right: 8px; top: 96px; width: 56px; height: 36px; object-fit: contain; }
   .qr-wrap { position: absolute; right: 8px; bottom: 6px; width: 46px; text-align: center; }
   .qr { width: 46px; height: 46px; }
   .qr svg { width: 100%; height: 100%; display: block; }
   .qr-label { font-size: 4.5px; letter-spacing: 0.4px; color: #64748b; margin-top: 1px; font-weight: 700; }
-  .versiculo { position: absolute; left: 74px; right: 60px; bottom: 6px; font-size: 7.5px; font-style: italic; color: #64748b; line-height: 10px; }
+  .versiculo { font-size: 7px; font-style: italic; color: #64748b; line-height: 9px; margin-bottom: 1px; }
+  .cnpj { font-size: 7.5px; font-weight: 700; color: #475569; line-height: 10px; text-align: center; }
 
   /* ---- Verso ---- */
   .content-back { position: absolute; left: 94px; right: 0; top: 0; bottom: 0; padding: 8px 8px 6px 4px; display: flex; flex-direction: column; justify-content: space-between; }

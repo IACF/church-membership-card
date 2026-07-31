@@ -6,7 +6,9 @@ const member: Member = {
   cpf: '11144477735',
   registro: '2024003',
   whatsapp: '87999998888',
-  funcao: 'Pastor/Secretário',
+  funcao: 'Pastor',
+  cargo: 'Secretário Geral',
+  cnpj: '66.551.138/0001-97',
   igreja: 'Assembleia de Deus Ministério Logos',
   nomePai: 'Raimundo Marques da Conceição',
   nomeMae: 'Maria Janete de Souza Conceição',
@@ -35,7 +37,14 @@ describe('buildCardHtml', () => {
     expect(html).toContain('Lucas de Souza Conceição');
     expect(html).toContain('2024003');
     expect(html).toContain('Assembleia de Deus Ministério Logos');
-    expect(html).toContain('Pastor/Secretário');
+  });
+
+  it('combina função e cargo como na tela (funcao - cargo)', () => {
+    expect(html).toContain('Pastor - Secretário Geral');
+  });
+
+  it('exibe o CNPJ no rodapé da frente', () => {
+    expect(html).toContain('CNPJ: 66.551.138/0001-97');
   });
 
   it('formata CPF e data como na tela', () => {
