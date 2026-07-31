@@ -154,7 +154,13 @@ export function buildCardHtml(member: Member, assets: CardAssets, qrSvg: string)
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>
+  /* Desativa o "font boosting"/auto-ajuste de fonte do WebView mobile (Android):
+     sem isso, fontes muito pequenas (ex.: rótulo AUTENTICIDADE 4.5px) são infladas
+     no celular, estouram a borda do cartão (overflow:hidden) e ficam cortadas —
+     enquanto na web renderizam pequenas e cabem. */
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   @page { size: A4; margin: 24px; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -200,10 +206,10 @@ export function buildCardHtml(member: Member, assets: CardAssets, qrSvg: string)
   .fc-value { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
   .front-footer { margin-top: auto; }
   .logo { position: absolute; right: 8px; top: 96px; width: 56px; height: 36px; object-fit: contain; }
-  .qr-wrap { position: absolute; right: 8px; bottom: 6px; width: 46px; text-align: center; }
-  .qr { width: 46px; height: 46px; }
+  .qr-wrap { position: absolute; right: 6px; bottom: 6px; width: 54px; text-align: center; }
+  .qr { width: 46px; height: 46px; margin: 0 auto; }
   .qr svg { width: 100%; height: 100%; display: block; }
-  .qr-label { font-size: 4.5px; letter-spacing: 0.4px; color: #64748b; margin-top: 1px; font-weight: 700; }
+  .qr-label { font-size: 4.5px; letter-spacing: 0.3px; color: #64748b; margin-top: 1px; font-weight: 700; white-space: nowrap; }
   .versiculo { font-size: 7px; font-style: italic; color: #64748b; line-height: 9px; margin-bottom: 1px; }
   .cnpj { font-size: 7.5px; font-weight: 700; color: #475569; line-height: 10px; text-align: center; }
 
