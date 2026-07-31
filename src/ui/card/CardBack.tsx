@@ -2,12 +2,12 @@ import { View, Text, Image, StyleSheet, type ImageSourcePropType } from 'react-n
 import type { Member } from '@/model/member';
 import { formatCpf, formatDate } from '@/lib/format';
 import LeftStrip from './LeftStrip';
+import { CARD_H } from './cardBase';
 
 // Assinaturas fixas (sempre as mesmas) — extraídas do modelo oficial do cliente.
 const ASSINATURA_PRESIDENTE = require('../../../assets/assinatura-presidente.png');
 const ASSINATURA_SECRETARIO = require('../../../assets/assinatura-secretario.png');
 
-const CARD_H = 215;
 const CONTENT_LEFT = 94;
 
 type Props = {

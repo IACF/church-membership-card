@@ -1,9 +1,17 @@
 import { useRef } from 'react';
-import { View, Text, TouchableOpacity, Animated, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Animated,
+  StyleSheet,
+  useWindowDimensions,
+} from 'react-native';
 import type { Member } from '@/model/member';
 import CardFront from './CardFront';
 import CardBack from './CardBack';
 import DelinquencyBanner from './DelinquencyBanner';
+import { CARD_W, CARD_H, computeCardScale } from './cardBase';
 
 type Props = {
   member: Member;
@@ -12,6 +20,12 @@ type Props = {
 export default function MembershipCard({ member }: Props) {
   const flipAnim = useRef(new Animated.Value(0)).current;
   const isFlippedRef = useRef(false);
+
+  // Escala responsiva: recalculada a cada mudança de dimensão (inclui rotação,
+  // via useWindowDimensions → re-render). Aplicada como transform no container,
+  // preservando o layout absoluto interno. Ver spec `carteirinha-responsiva`.
+  const { width, height } = useWindowDimensions();
+  const scale = computeCardScale(width, height);
 
   const flip = () => {
     const toValue = isFlippedRef.current ? 0 : 1;
@@ -37,35 +51,39 @@ export default function MembershipCard({ member }: Props) {
 
   return (
     <View style={s.wrapper}>
-      <TouchableOpacity onPress={flip} activeOpacity={1} style={s.shadow}>
-        <View style={s.container}>
-          <Animated.View
-            style={[
-              s.card,
-              {
-                transform: [{ perspective: 1200 }, { rotateY: frontRotate }],
-                backfaceVisibility: 'hidden',
-              },
-            ]}
-          >
-            <CardFront member={member} />
-          </Animated.View>
+      <TouchableOpacity onPress={flip} activeOpacity={1}>
+        {/* Caixa externa reserva o tamanho JÁ escalado; o container base 340×215
+            é escalado a partir do canto superior-esquerdo para preenchê-la. */}
+        <View style={[s.shadow, { width: CARD_W * scale, height: CARD_H * scale }]}>
+          <View style={[s.container, { transform: [{ scale }], transformOrigin: 'top left' }]}>
+            <Animated.View
+              style={[
+                s.card,
+                {
+                  transform: [{ perspective: 1200 }, { rotateY: frontRotate }],
+                  backfaceVisibility: 'hidden',
+                },
+              ]}
+            >
+              <CardFront member={member} />
+            </Animated.View>
 
-          <Animated.View
-            style={[
-              s.card,
-              s.cardAbsolute,
-              {
-                transform: [{ perspective: 1200 }, { rotateY: backRotate }],
-                backfaceVisibility: 'hidden',
-              },
-            ]}
-          >
-            <CardBack member={member} />
-          </Animated.View>
+            <Animated.View
+              style={[
+                s.card,
+                s.cardAbsolute,
+                {
+                  transform: [{ perspective: 1200 }, { rotateY: backRotate }],
+                  backfaceVisibility: 'hidden',
+                },
+              ]}
+            >
+              <CardBack member={member} />
+            </Animated.View>
 
-          {/* Tarja de inadimplência: por cima das faces (fora do flip). */}
-          {member.inadimplente ? <DelinquencyBanner /> : null}
+            {/* Tarja de inadimplência: por cima das faces (fora do flip). */}
+            {member.inadimplente ? <DelinquencyBanner /> : null}
+          </View>
         </View>
       </TouchableOpacity>
       <Text style={s.hint}>↻ Toque para virar</Text>

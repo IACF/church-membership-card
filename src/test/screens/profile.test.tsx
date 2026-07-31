@@ -37,6 +37,29 @@ describe('ProfileScreen', () => {
     expect(screen.getByText('(87) 99999-8888')).toBeOnTheScreen();
   });
 
+  it('exibe Função e Cargo em linhas separadas', () => {
+    (useMember as jest.Mock).mockReturnValue({
+      isPending: false,
+      isError: false,
+      data: {
+        nomeCompleto: 'Fulano Teste',
+        registro: 'REG-1',
+        funcao: 'Pastor',
+        cargo: 'Presidente do Conselho',
+        igreja: 'Central',
+        filiacao: 'Pai e Mae',
+        cpf: '52998224725',
+        nascimento: '1990-05-20',
+        estadoCivil: 'Casado(a)',
+        whatsapp: '87999998888',
+      },
+    });
+    render(<ProfileScreen />);
+    expect(screen.getByText('Função')).toBeOnTheScreen();
+    expect(screen.getByText('Cargo')).toBeOnTheScreen();
+    expect(screen.getByText('Presidente do Conselho')).toBeOnTheScreen();
+  });
+
   it('o botão Alterar senha navega para a troca de senha', () => {
     render(<ProfileScreen />);
     fireEvent.press(screen.getByTestId('change-password'));

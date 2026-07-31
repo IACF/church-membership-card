@@ -22,6 +22,13 @@ describe('handleResponseError (interceptor)', () => {
     await waitFor(() => expect(useSessionStore.getState().isAuthenticated).toBe(false));
   });
 
+  it('422 autenticado (senha atual incorreta) → mantém a sessão', async () => {
+    setAuthenticated();
+    const err = { response: { status: 422 } } as AxiosError;
+    await expect(handleResponseError(err)).rejects.toBe(err);
+    expect(useSessionStore.getState().isAuthenticated).toBe(true);
+  });
+
   it('erro de rede (sem response) → mantém a sessão', async () => {
     setAuthenticated();
     const err = new AxiosError('offline', 'ERR_NETWORK');

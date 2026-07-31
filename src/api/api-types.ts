@@ -165,12 +165,18 @@ export interface components {
             sobrenome: string;
             /** @example 058.178.655-64 */
             cpf: string;
-            /** @example 2024003 */
-            registro: string;
             /** @example 87999998888 */
             whatsapp: string;
-            /** @example Pastor/Secretário */
+            /**
+             * @description Função (lista fechada)
+             * @example Pastor
+             */
             funcao: string;
+            /**
+             * @description Cargo em texto livre (pode ser longo)
+             * @example Presidente do Conselho de Pastores do Vale do São Francisco
+             */
+            cargo: string;
             /** @example Assembleia de Deus Ministério Logos */
             igreja: string;
             /** @example Raimundo Marques da Conceição */
@@ -191,12 +197,18 @@ export interface components {
             sobrenome?: string;
             /** @example 058.178.655-64 */
             cpf?: string;
-            /** @example 2024003 */
-            registro?: string;
             /** @example 87999998888 */
             whatsapp?: string;
-            /** @example Pastor/Secretário */
+            /**
+             * @description Função (lista fechada)
+             * @example Pastor
+             */
             funcao?: string;
+            /**
+             * @description Cargo em texto livre (pode ser longo)
+             * @example Presidente do Conselho de Pastores do Vale do São Francisco
+             */
+            cargo?: string;
             /** @example Assembleia de Deus Ministério Logos */
             igreja?: string;
             /** @example Raimundo Marques da Conceição */
@@ -227,6 +239,11 @@ export interface components {
             whatsapp: string;
             /** @example Pastor */
             funcao: string;
+            /**
+             * @description Cargo em texto livre
+             * @example Presidente do Conselho de Pastores do Vale do São Francisco
+             */
+            cargo?: string;
             /** @example Assembleia de Deus Ministério Logos */
             igreja: string;
             /** @example Raimundo Marques da Conceição */
@@ -249,6 +266,11 @@ export interface components {
             photoUrl?: string;
             /** @example false */
             inadimplente: boolean;
+            /**
+             * @description CNPJ do conselho (config global), exibido no rodapé frontal da carteirinha
+             * @example 66.551.138/0001-97
+             */
+            cnpj: string;
             /** @example José Humberto S. Santos */
             presidente: string;
             /** @example Lucas de Souza Conceição */

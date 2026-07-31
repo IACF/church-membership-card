@@ -66,8 +66,10 @@ describe('ChangePasswordScreen', () => {
     expect(mockedChange).toHaveBeenCalledWith('52998', 'nova-senha-1');
   });
 
-  it('senha atual incorreta (401): mostra mensagem', async () => {
-    mockedChange.mockRejectedValue({ response: { status: 401 } });
+  it('senha atual incorreta (422): mostra a mensagem do server e mantém a sessão', async () => {
+    mockedChange.mockRejectedValue({
+      response: { status: 422, data: { message: 'Senha atual incorreta' } },
+    });
     renderScreen();
 
     fireEvent.changeText(screen.getByTestId('currentPassword'), 'errada');
@@ -76,5 +78,7 @@ describe('ChangePasswordScreen', () => {
     fireEvent.press(screen.getByTestId('submit'));
 
     await waitFor(() => expect(screen.getByText('Senha atual incorreta')).toBeOnTheScreen());
+    // 422 não é 401 → a sessão é preservada (não desloga).
+    expect(useSessionStore.getState().isAuthenticated).toBe(true);
   });
 });
