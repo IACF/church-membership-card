@@ -35,11 +35,22 @@ async function moduleToDataUrl(mod: number): Promise<string> {
   return `data:image/png;base64,${base64}`;
 }
 
-// Resolve a foto do membro (photoUrl remoto) para data URI base64. Falha (ou sem
-// foto) → undefined (o HTML cai no placeholder).
-async function photoToDataUrl(url: string): Promise<string | undefined> {
+// Resolve a foto do membro (photoUrl remoto) para uso no <img> do PDF.
+// - Nativo: baixa e embute como base64.
+// - Web: tenta embutir via fetch (base64); se falhar (o /uploads é servido SEM
+//   header CORS, então fetch cross-origin é bloqueado), cai para a URL absoluta —
+//   o <img> na aba de impressão exibe cross-origin sem exigir CORS, e o print
+//   embute a imagem já renderizada no PDF.
+// Sem foto ou falha total → undefined (o HTML usa o placeholder).
+async function photoToSrc(url: string): Promise<string | undefined> {
+  if (Platform.OS === 'web') {
+    try {
+      return await urlToDataUrl(url);
+    } catch {
+      return url;
+    }
+  }
   try {
-    if (Platform.OS === 'web') return await urlToDataUrl(url);
     const dest = new File(Paths.cache, 'copvasf-card-photo.jpg');
     const downloaded = await File.downloadFileAsync(url, dest, { idempotent: true });
     const base64 = await downloaded.base64();
@@ -58,6 +69,6 @@ export async function resolveCardAssets(member: Member): Promise<CardAssets> {
     moduleToDataUrl(SIG_PRESIDENTE),
     moduleToDataUrl(SIG_SECRETARIO),
   ]);
-  const photo = member.photoUrl ? await photoToDataUrl(member.photoUrl) : undefined;
+  const photo = member.photoUrl ? await photoToSrc(member.photoUrl) : undefined;
   return { brasao, logo, assinaturaPresidente, assinaturaSecretario, photo };
 }
