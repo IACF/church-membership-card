@@ -73,7 +73,11 @@ describe('buildCardHtml', () => {
   });
 
   it('sem foto → usa o placeholder (sem <img> de foto)', () => {
-    const semFoto = buildCardHtml({ ...member, photoUrl: undefined }, { ...assets, photo: undefined }, qrSvg);
+    const semFoto = buildCardHtml(
+      { ...member, photoUrl: undefined },
+      { ...assets, photo: undefined },
+      qrSvg,
+    );
     expect(semFoto).toContain('photo-ph');
     expect(semFoto).not.toContain('data:image/jpeg;base64,PHOTO');
   });
