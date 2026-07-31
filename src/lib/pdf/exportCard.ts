@@ -30,11 +30,27 @@ async function buildHtml(member: Member): Promise<string> {
 
 // Web: expo-print só faz window.print() da página atual (ignora o HTML). Então
 // abrimos o HTML numa nova aba e imprimimos lá (o navegador salva como PDF).
-function exportOnWeb(html: string): void {
+// Importante: esperar as imagens (data URIs) decodificarem ANTES de imprimir —
+// senão o PDF sai com as imagens em branco.
+async function exportOnWeb(html: string): Promise<void> {
   const win = window.open('', '_blank');
   if (!win) return;
+  win.document.open();
   win.document.write(html);
   win.document.close();
+
+  const imgs = Array.from(win.document.images);
+  await Promise.all(
+    imgs.map((img) =>
+      img.complete
+        ? Promise.resolve()
+        : new Promise<void>((resolve) => {
+            img.addEventListener('load', () => resolve());
+            img.addEventListener('error', () => resolve());
+          }),
+    ),
+  );
+
   win.focus();
   win.print();
 }
@@ -56,7 +72,7 @@ export async function exportCardPdf(member: Member): Promise<void> {
   try {
     const html = await buildHtml(member);
     if (Platform.OS === 'web') {
-      exportOnWeb(html);
+      await exportOnWeb(html);
       return;
     }
     await exportOnNative(html, member);
