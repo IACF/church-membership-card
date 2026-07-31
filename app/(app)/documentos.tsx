@@ -1,5 +1,5 @@
-import ComingSoon from '@/ui/ComingSoon';
+import DocumentList from '@/ui/documents/DocumentList';
 
 export default function DocumentosScreen() {
-  return <ComingSoon title="Documentos" />;
+  return <DocumentList location="documentos" />;
 }
