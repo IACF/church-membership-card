@@ -98,7 +98,12 @@ function front(member: Member, assets: CardAssets, qrSvg: string): string {
     </div>
     <div class="qr-wrap">
       <div class="qr">${qrSvg}</div>
-      <div class="qr-label">AUTENTICIDADE</div>
+      <!-- Rótulo como texto SVG (não como texto HTML): imune ao "font boosting" do
+           WebView mobile, que inflava o texto e o cortava. O viewBox largo com
+           text-anchor middle garante que o texto nunca estoure a borda. -->
+      <svg class="qr-label" width="54" height="8" viewBox="0 0 96 12" preserveAspectRatio="xMidYMid meet">
+        <text x="48" y="9" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="8" font-weight="700" letter-spacing="0.4" fill="#64748b">AUTENTICIDADE</text>
+      </svg>
     </div>
     ${member.inadimplente ? tarja() : ''}
   </div>`;
@@ -209,7 +214,7 @@ export function buildCardHtml(member: Member, assets: CardAssets, qrSvg: string)
   .qr-wrap { position: absolute; right: 6px; bottom: 6px; width: 54px; text-align: center; }
   .qr { width: 46px; height: 46px; margin: 0 auto; }
   .qr svg { width: 100%; height: 100%; display: block; }
-  .qr-label { font-size: 4.5px; letter-spacing: 0.3px; color: #64748b; margin-top: 1px; font-weight: 700; white-space: nowrap; }
+  .qr-label { display: block; width: 54px; height: 8px; margin: 1px auto 0; }
   .versiculo { font-size: 7px; font-style: italic; color: #64748b; line-height: 9px; margin-bottom: 1px; }
   .cnpj { font-size: 7.5px; font-weight: 700; color: #475569; line-height: 10px; text-align: center; }
 
