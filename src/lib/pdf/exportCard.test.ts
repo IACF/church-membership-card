@@ -54,6 +54,7 @@ const member: Member = {
   registro: '2024003',
   whatsapp: '87999998888',
   funcao: 'Pastor',
+  cnpj: '66.551.138/0001-97',
   igreja: 'AD Logos',
   nomeMae: 'Maria',
   filiacao: 'Maria',
