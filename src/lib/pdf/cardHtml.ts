@@ -187,12 +187,12 @@ export function buildCardHtml(member: Member, assets: CardAssets, qrSvg: string)
     border: 1.5px solid #718096; display: flex; align-items: center; justify-content: center; font-size: 24px;
   }
   .brasao { position: absolute; left: 8px; bottom: 6px; width: 44px; height: 44px; object-fit: contain; }
-  .header { position: absolute; top: 16px; left: 84px; right: 8px; text-align: center; }
+  .header { position: absolute; top: 6px; left: 84px; right: 8px; text-align: center; }
   .title-main { font-size: 15px; font-weight: 800; color: #3a4658; letter-spacing: 0.5px; text-transform: uppercase; }
   .title-sub { font-size: 12.5px; font-weight: 700; color: #4a5568; margin-top: 1px; text-transform: uppercase; }
   /* Coluna em fluxo entre o título e a base (como o CardFront): campos fluem do
      topo; o rodapé (versículo + CNPJ) é empurrado para baixo por margin-top:auto. */
-  .content-front { position: absolute; top: 42px; left: 78px; right: 72px; bottom: 5px; display: flex; flex-direction: column; }
+  .content-front { position: absolute; top: 46px; left: 78px; right: 72px; bottom: 5px; display: flex; flex-direction: column; }
   .field { margin-bottom: 1px; }
   .f-label { font-size: 9px; color: #718096; line-height: 10px; }
   .f-value { font-size: 13px; font-weight: 700; color: #2d3748; line-height: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

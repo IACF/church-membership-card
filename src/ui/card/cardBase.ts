@@ -6,24 +6,20 @@ export const CARD_W = 340;
 export const CARD_H = 215;
 export const ASPECT = CARD_W / CARD_H; // proporção inviolável (~1.581)
 
-// Espaço reservado fora do cartão ao calcular a escala: margens laterais + o que
-// não é o cartão na altura (header do shell, dica "Toque para virar", respiro).
-// VERTICAL_RESERVE é pequeno o bastante para que, no modo paisagem (altura curta),
-// o cartão ainda cresça em vez de encolher.
 const HORIZONTAL_MARGIN = 24;
-const VERTICAL_RESERVE = 120;
 // Teto para telas grandes (tablets), evitando um cartão desproporcionalmente enorme.
 const MAX_SCALE = 1.8;
 
-// Fator de escala do cartão a partir das dimensões da janela. Escolhe o menor
-// entre "caber na largura" e "caber na altura" (mantém a proporção 340:215),
-// limitado por MAX_SCALE. Telas pequenas → < 1 (reduz); grandes → satura no teto.
+// Fator de escala do cartão a partir das dimensões da janela. Guiado pela LARGURA
+// disponível (mantém a proporção 340:215), com um teto pela altura da janela e por
+// MAX_SCALE. A tela da carteirinha ROLA na vertical (ScrollView), então em paisagem
+// o cartão cresce usando a largura ampla em vez de encolher pela altura curta —
+// e nada é cortado quando ele passa da área visível. Telas pequenas → < 1 (reduz).
 // Puro/determinístico para ser testado sem renderizar.
 export function computeCardScale(windowWidth: number, windowHeight: number): number {
-  const availW = Math.max(windowWidth - HORIZONTAL_MARGIN, 1);
-  const availH = Math.max(windowHeight - VERTICAL_RESERVE, 1);
-  const fit = Math.min(availW / CARD_W, availH / CARD_H);
-  return Math.min(fit, MAX_SCALE);
+  const byWidth = Math.max(windowWidth - HORIZONTAL_MARGIN, 1) / CARD_W;
+  const byHeight = Math.max(windowHeight, 1) / CARD_H;
+  return Math.min(byWidth, byHeight, MAX_SCALE);
 }
 
 // Tamanho da fonte da linha Função/Cargo. A coluna comporta ~CARGO_CHARS_2_LINES
