@@ -5,6 +5,9 @@ import { useMember } from '@/hooks/useMember';
 import { memberFixture } from '@/model/member.fixture';
 
 jest.mock('@/hooks/useMember');
+// O botão de exportar puxa expo-print/sharing/file-system via exportCard — mockado
+// aqui para o teste da tela não depender de módulos nativos.
+jest.mock('@/lib/pdf/exportCard', () => ({ exportCardPdf: jest.fn() }));
 
 beforeEach(() => jest.clearAllMocks());
 
@@ -32,5 +35,29 @@ describe('CarteirinhaScreen (resiliência)', () => {
 
     render(<CarteirinhaScreen />);
     expect(screen.getByText('Sem conexão com a internet.')).toBeOnTheScreen();
+  });
+
+  it('com membro → oferece "Exportar PDF"', () => {
+    (useMember as jest.Mock).mockReturnValue({
+      data: memberFixture,
+      isPending: false,
+      error: null,
+      refetch: jest.fn(),
+    });
+
+    render(<CarteirinhaScreen />);
+    expect(screen.getByTestId('export-pdf')).toBeOnTheScreen();
+  });
+
+  it('sem membro (carregando) → não mostra "Exportar PDF"', () => {
+    (useMember as jest.Mock).mockReturnValue({
+      data: undefined,
+      isPending: true,
+      error: null,
+      refetch: jest.fn(),
+    });
+
+    render(<CarteirinhaScreen />);
+    expect(screen.queryByTestId('export-pdf')).toBeNull();
   });
 });
