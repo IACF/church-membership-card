@@ -98,7 +98,12 @@ function front(member: Member, assets: CardAssets, qrSvg: string): string {
     </div>
     <div class="qr-wrap">
       <div class="qr">${qrSvg}</div>
-      <div class="qr-label">AUTENTICIDADE</div>
+      <!-- Rótulo como texto SVG (não como texto HTML): imune ao "font boosting" do
+           WebView mobile, que inflava o texto e o cortava. O viewBox largo com
+           text-anchor middle garante que o texto nunca estoure a borda. -->
+      <svg class="qr-label" width="54" height="8" viewBox="0 0 96 12" preserveAspectRatio="xMidYMid meet">
+        <text x="48" y="9" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="8" font-weight="700" letter-spacing="0.4" fill="#64748b">AUTENTICIDADE</text>
+      </svg>
     </div>
     ${member.inadimplente ? tarja() : ''}
   </div>`;
@@ -154,7 +159,13 @@ export function buildCardHtml(member: Member, assets: CardAssets, qrSvg: string)
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>
+  /* Desativa o "font boosting"/auto-ajuste de fonte do WebView mobile (Android):
+     sem isso, fontes muito pequenas (ex.: rótulo AUTENTICIDADE 4.5px) são infladas
+     no celular, estouram a borda do cartão (overflow:hidden) e ficam cortadas —
+     enquanto na web renderizam pequenas e cabem. */
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   @page { size: A4; margin: 24px; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -187,12 +198,12 @@ export function buildCardHtml(member: Member, assets: CardAssets, qrSvg: string)
     border: 1.5px solid #718096; display: flex; align-items: center; justify-content: center; font-size: 24px;
   }
   .brasao { position: absolute; left: 8px; bottom: 6px; width: 44px; height: 44px; object-fit: contain; }
-  .header { position: absolute; top: 16px; left: 84px; right: 8px; text-align: center; }
+  .header { position: absolute; top: 6px; left: 84px; right: 8px; text-align: center; }
   .title-main { font-size: 15px; font-weight: 800; color: #3a4658; letter-spacing: 0.5px; text-transform: uppercase; }
   .title-sub { font-size: 12.5px; font-weight: 700; color: #4a5568; margin-top: 1px; text-transform: uppercase; }
   /* Coluna em fluxo entre o título e a base (como o CardFront): campos fluem do
      topo; o rodapé (versículo + CNPJ) é empurrado para baixo por margin-top:auto. */
-  .content-front { position: absolute; top: 42px; left: 78px; right: 72px; bottom: 5px; display: flex; flex-direction: column; }
+  .content-front { position: absolute; top: 46px; left: 78px; right: 72px; bottom: 5px; display: flex; flex-direction: column; }
   .field { margin-bottom: 1px; }
   .f-label { font-size: 9px; color: #718096; line-height: 10px; }
   .f-value { font-size: 13px; font-weight: 700; color: #2d3748; line-height: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -200,10 +211,10 @@ export function buildCardHtml(member: Member, assets: CardAssets, qrSvg: string)
   .fc-value { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
   .front-footer { margin-top: auto; }
   .logo { position: absolute; right: 8px; top: 96px; width: 56px; height: 36px; object-fit: contain; }
-  .qr-wrap { position: absolute; right: 8px; bottom: 6px; width: 46px; text-align: center; }
-  .qr { width: 46px; height: 46px; }
+  .qr-wrap { position: absolute; right: 6px; bottom: 6px; width: 54px; text-align: center; }
+  .qr { width: 46px; height: 46px; margin: 0 auto; }
   .qr svg { width: 100%; height: 100%; display: block; }
-  .qr-label { font-size: 4.5px; letter-spacing: 0.4px; color: #64748b; margin-top: 1px; font-weight: 700; }
+  .qr-label { display: block; width: 54px; height: 8px; margin: 1px auto 0; }
   .versiculo { font-size: 7px; font-style: italic; color: #64748b; line-height: 9px; margin-bottom: 1px; }
   .cnpj { font-size: 7.5px; font-weight: 700; color: #475569; line-height: 10px; text-align: center; }
 

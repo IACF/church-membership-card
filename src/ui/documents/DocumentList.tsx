@@ -2,12 +2,15 @@ import {
   ActivityIndicator,
   FlatList,
   Linking,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import * as Sharing from 'expo-sharing';
+import { File, Paths } from 'expo-file-system';
 import { useDocuments } from '@/hooks/useDocuments';
 import type { AppDocument, DocumentLocation } from '@/model/document';
 import { colors, spacing } from '@/theme/theme';
@@ -16,11 +19,32 @@ type Props = {
   location: DocumentLocation;
 };
 
+// Abre o PDF do documento. No nativo, BAIXA o arquivo e abre a folha "abrir com"
+// do sistema (visualizador de PDF), em vez de mandar a URL para o navegador.
+// Na web (ou se o download/share falhar), cai para Linking (abre/baixa no browser).
+async function openDocument(item: AppDocument): Promise<void> {
+  if (Platform.OS === 'web') {
+    void Linking.openURL(item.fileUrl).catch(() => undefined);
+    return;
+  }
+  try {
+    const safeName = (item.title || 'documento').replace(/[^\w.-]+/g, '_').slice(0, 80);
+    const dest = new File(Paths.cache, `${safeName}.pdf`);
+    if (dest.exists) dest.delete();
+    const file = await File.downloadFileAsync(item.fileUrl, dest);
+    if (await Sharing.isAvailableAsync()) {
+      await Sharing.shareAsync(file.uri, { mimeType: 'application/pdf', UTI: 'com.adobe.pdf' });
+    } else {
+      void Linking.openURL(item.fileUrl).catch(() => undefined);
+    }
+  } catch {
+    void Linking.openURL(item.fileUrl).catch(() => undefined);
+  }
+}
+
 function DocumentListItem({ item }: { item: AppDocument }) {
   const open = () => {
-    // Abre o PDF no visualizador/navegador padrão do dispositivo. Silencia falhas
-    // (ex.: sem app capaz de abrir a URL) para não quebrar a tela.
-    void Linking.openURL(item.fileUrl).catch(() => undefined);
+    void openDocument(item);
   };
 
   return (

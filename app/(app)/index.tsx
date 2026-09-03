@@ -1,4 +1,4 @@
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useMember } from '@/hooks/useMember';
 import { toAppError } from '@/model/errors';
@@ -11,7 +11,9 @@ export default function CarteirinhaScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
-      <View style={styles.center}>
+      {/* ScrollView centraliza o conteúdo quando cabe e ROLA quando não cabe
+          (ex.: paisagem, cartão grande) — sem cortar o topo do cartão nem o link. */}
+      <ScrollView contentContainerStyle={styles.center} showsVerticalScrollIndicator={false}>
         {/* Prioriza o cache: se há dados (mesmo offline com refetch em erro),
             mostra a carteirinha. Só exibe erro quando não há nada em cache. */}
         {member ? (
@@ -22,14 +24,14 @@ export default function CarteirinhaScreen() {
         ) : isPending ? (
           <ActivityIndicator color={colors.accentBlue} />
         ) : (
-          <View style={styles.center}>
+          <View style={styles.errorBox}>
             <Text style={styles.errorText}>{toAppError(error).message}</Text>
             <Pressable testID="retry" onPress={() => void refetch()}>
               <Text style={styles.retry}>Tentar novamente</Text>
             </Pressable>
           </View>
         )}
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -40,7 +42,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   center: {
-    flex: 1,
+    flexGrow: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: spacing.lg,
+  },
+  errorBox: {
     alignItems: 'center',
     justifyContent: 'center',
   },

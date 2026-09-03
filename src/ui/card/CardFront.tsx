@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
   },
   header: {
     position: 'absolute',
-    top: 16,
+    top: 6,
     left: 84,
     right: 8,
   },
@@ -132,9 +132,10 @@ const styles = StyleSheet.create({
   },
   content: {
     // Coluna em fluxo entre o título e o rodapé do cartão, à direita da faixa e
-    // à esquerda do logo (right: 72). left/right evitam faixa e logo.
+    // à esquerda do logo (right: 72). left/right evitam faixa e logo. top:46 deixa
+    // uma folga abaixo do subtítulo (que subiu) para "Nome:" não colar no título.
     position: 'absolute',
-    top: 42,
+    top: 46,
     left: 78,
     right: 72,
     bottom: 5,
