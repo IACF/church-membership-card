@@ -41,4 +41,6 @@ for (const [name, file] of Object.entries(ASSETS)) {
 
 const out = join(root, 'src/lib/pdf/assets.base64.ts');
 writeFileSync(out, lines.join('\n'));
-console.log(`gerado: src/lib/pdf/assets.base64.ts (${(lines.join('\n').length / 1024).toFixed(0)} KB)`);
+console.log(
+  `gerado: src/lib/pdf/assets.base64.ts (${(lines.join('\n').length / 1024).toFixed(0)} KB)`,
+);

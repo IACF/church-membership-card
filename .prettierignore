@@ -8,5 +8,7 @@ coverage
 package-lock.json
 # gerado do OpenAPI — não formatar
 src/api/api-types.ts
+# gerado por scripts/gen-pdf-assets.mjs — data URIs de centenas de KB, não formatar
+src/lib/pdf/assets.base64.ts
 # docs em markdown são prosa — não impor estilo de código
 **/*.md
