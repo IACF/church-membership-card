@@ -18,7 +18,7 @@
     },
     "android": {
       "package": "br.org.copvasf.carteirinha",
-      "versionCode": 1,
+      "versionCode": 4,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0f172a"
@@ -33,7 +33,11 @@
         "projectId": "71d5342b-eac2-4899-9b03-1d221b0460ac"
       }
     },
-    "plugins": ["expo-router", "expo-secure-store", "expo-asset"],
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "expo-asset"
+    ],
     "experiments": {
       "tsconfigPaths": true
     }
