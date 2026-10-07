@@ -15,17 +15,21 @@ import { CARD_W, CARD_H, computeCardScale } from './cardBase';
 
 type Props = {
   member: Member;
+  // Área de conteúdo medida pela tela (onLayout). Enquanto não chega — primeiro
+  // frame — cai nas dimensões da janela, evitando piscar.
+  available?: { width: number; height: number };
 };
 
-export default function MembershipCard({ member }: Props) {
+export default function MembershipCard({ member, available }: Props) {
   const flipAnim = useRef(new Animated.Value(0)).current;
   const isFlippedRef = useRef(false);
 
-  // Escala responsiva: recalculada a cada mudança de dimensão (inclui rotação,
-  // via useWindowDimensions → re-render). Aplicada como transform no container,
-  // preservando o layout absoluto interno. Ver spec `carteirinha-responsiva`.
+  // Escala responsiva: recalculada a cada mudança de dimensão (inclui rotação).
+  // Usa a ÁREA MEDIDA quando disponível — é o que faz o cartão caber sem rolagem
+  // em paisagem (spec `carteirinha-paisagem`); a janela é só o fallback do
+  // primeiro frame. Aplicada como transform, preservando o layout absoluto.
   const { width, height } = useWindowDimensions();
-  const scale = computeCardScale(width, height);
+  const scale = computeCardScale(available?.width ?? width, available?.height ?? height);
 
   const flip = () => {
     const toValue = isFlippedRef.current ? 0 : 1;
