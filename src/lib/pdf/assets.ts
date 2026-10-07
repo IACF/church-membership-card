@@ -59,14 +59,28 @@ async function photoToSrc(url: string): Promise<string | undefined> {
 }
 
 // Reúne todos os assets prontos (base64) para o buildCardHtml.
+// Assinatura configurada no servidor: baixa e embute. Usa o MESMO caminho do
+// `photoToSrc` (URL HTTPS absoluta → download → base64), que é comprovadamente
+// seguro no APK de release — o que falhava eram assets EMPACOTADOS, resolvidos em
+// runtime (ver BUILD-APK.md, armadilha nº 1). Sem URL, ou se o download falhar,
+// devolve a constante embutida, para o PDF nunca sair com espaço em branco.
+async function assinaturaToSrc(url: string | undefined, embutida: string): Promise<string> {
+  if (!url) return embutida;
+  return (await photoToSrc(url)) ?? embutida;
+}
+
 export async function resolveCardAssets(member: Member): Promise<CardAssets> {
-  // Estáticos: constantes, sem I/O nem resolução de asset — não podem falhar.
-  const photo = member.photoUrl ? await photoToSrc(member.photoUrl) : undefined;
+  // Brasão e logo: constantes, sem I/O nem resolução de asset — não podem falhar.
+  const [photo, assinaturaPresidente, assinaturaSecretario] = await Promise.all([
+    member.photoUrl ? photoToSrc(member.photoUrl) : Promise.resolve(undefined),
+    assinaturaToSrc(member.assinaturas?.[0]?.imagemUrl, SIG_PRESIDENTE_DATA_URL),
+    assinaturaToSrc(member.assinaturas?.[1]?.imagemUrl, SIG_SECRETARIO_DATA_URL),
+  ]);
   return {
     brasao: BRASAO_DATA_URL,
     logo: LOGO_DATA_URL,
-    assinaturaPresidente: SIG_PRESIDENTE_DATA_URL,
-    assinaturaSecretario: SIG_SECRETARIO_DATA_URL,
+    assinaturaPresidente,
+    assinaturaSecretario,
     photo,
   };
 }
