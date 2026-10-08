@@ -5,7 +5,8 @@ import {
   computeCardScale,
   fitCargoFontSize,
   CARGO_BASE_FONT,
-  CARD_CHROME_H,
+  CARD_CHROME_PORTRAIT,
+  CARD_CHROME_LANDSCAPE,
   CARD_W,
   CARD_H,
   ASPECT,
@@ -44,38 +45,60 @@ describe('computeCardScale (responsividade)', () => {
 // a altura da JANELA como teto e ignorava cabeçalho, dica e botão de exportar —
 // o cálculo dizia que cabia e a tela rolava.
 describe('computeCardScale — cabe sem rolagem em paisagem', () => {
-  // iPhone 14 deitado (844×390), menos a trilha vertical de 48px.
-  const LARGURA = 844 - 48;
+  // iPhone 14 deitado (844×390), menos a trilha vertical de 56px.
+  const LARGURA = 844 - 56;
   const ALTURA = 390;
 
-  it('o cartão e seus irmãos cabem na altura disponível', () => {
-    const s = computeCardScale(LARGURA, ALTURA);
-    expect(CARD_H * s + CARD_CHROME_H).toBeLessThanOrEqual(ALTURA);
+  it('o cartão e seu respiro cabem na altura disponível', () => {
+    const s = computeCardScale(LARGURA, ALTURA, true);
+    expect(CARD_H * s + CARD_CHROME_LANDSCAPE).toBeLessThanOrEqual(ALTURA);
   });
 
   it('o cartão cabe na largura disponível', () => {
-    const s = computeCardScale(LARGURA, ALTURA);
+    const s = computeCardScale(LARGURA, ALTURA, true);
     expect(CARD_W * s).toBeLessThanOrEqual(LARGURA);
   });
 
   it('cabe também num aparelho pequeno deitado (640×360)', () => {
-    const l = 640 - 48;
+    const l = 640 - 56;
     const a = 360;
-    const s = computeCardScale(l, a);
-    expect(CARD_H * s + CARD_CHROME_H).toBeLessThanOrEqual(a);
+    const s = computeCardScale(l, a, true);
+    expect(CARD_H * s + CARD_CHROME_LANDSCAPE).toBeLessThanOrEqual(a);
     expect(CARD_W * s).toBeLessThanOrEqual(l);
   });
 
-  it('mesmo cabendo, continua legível (não encolhe a ponto de inutilizar)', () => {
-    // Piso: no aparelho pequeno deitado o cartão ainda ocupa mais da metade da
-    // altura útil. Se cair disso, a correção virou cartão minúsculo.
-    const s = computeCardScale(640 - 48, 360);
-    expect(CARD_H * s).toBeGreaterThan((360 - CARD_CHROME_H) * 0.5);
+  it('a proporção segue intacta em paisagem', () => {
+    const s = computeCardScale(LARGURA, ALTURA, true);
+    expect((CARD_W * s) / (CARD_H * s)).toBeCloseTo(ASPECT);
+  });
+});
+
+// Deitado, a altura é o recurso escasso. Tirar a dica e o botão de baixo do
+// cartão (selo sobreposto + exportar na trilha) é o que permite o cartão crescer.
+// Sem estes testes, alguém poderia devolver o chrome ao eixo vertical sem notar
+// que encolheu a carteirinha em um terço.
+describe('aproveitamento da altura em paisagem', () => {
+  const LARGURA = 844 - 56;
+  const ALTURA = 390;
+
+  it('ocupa ao menos 90% da altura disponível', () => {
+    const s = computeCardScale(LARGURA, ALTURA, true);
+    expect((CARD_H * s) / ALTURA).toBeGreaterThan(0.9);
   });
 
-  it('a proporção segue intacta em paisagem', () => {
-    const s = computeCardScale(LARGURA, ALTURA);
-    expect((CARD_W * s) / (CARD_H * s)).toBeCloseTo(ASPECT);
+  it('é bem maior do que seria com o chrome de retrato', () => {
+    const deitado = computeCardScale(LARGURA, ALTURA, true);
+    const comChromeDeRetrato = computeCardScale(LARGURA, ALTURA, false);
+    expect(deitado).toBeGreaterThan(comChromeDeRetrato * 1.25);
+  });
+
+  it('o chrome de paisagem é bem menor que o de retrato', () => {
+    expect(CARD_CHROME_LANDSCAPE).toBeLessThan(CARD_CHROME_PORTRAIT / 3);
+  });
+
+  it('não excede a altura (o limite é caber, não encostar)', () => {
+    const s = computeCardScale(LARGURA, ALTURA, true);
+    expect(CARD_H * s).toBeLessThan(ALTURA);
   });
 });
 

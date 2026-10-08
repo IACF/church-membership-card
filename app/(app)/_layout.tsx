@@ -1,4 +1,4 @@
-import { Stack } from 'expo-router';
+import { Stack, useSegments } from 'expo-router';
 import { useRef, useState } from 'react';
 import {
   Animated,
@@ -11,13 +11,16 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DrawerContent from '@/ui/shell/DrawerContent';
+import ExportRailButton from '@/ui/shell/ExportRailButton';
 import { colors } from '@/theme/theme';
 
 const DRAWER_W = 280;
-// Largura da trilha vertical em paisagem: cabe o botão de menu e nada mais. O
-// título "COPVASF" não entra — 48px não comportam o texto, e girá-lo custaria
-// complexidade sem ganho (a identidade já está na carteirinha).
-const RAIL_W = 48;
+// Largura da trilha vertical em paisagem. 56px (e não 48) para o ícone do menu
+// não encostar na borda azul da direita — com 48 a folga ficava apertada demais.
+// Alargar não custa nada ao cartão: deitado sobra largura e falta altura, então
+// quem limita o tamanho é a altura. O título "COPVASF" não entra: não cabe, e
+// girá-lo custaria complexidade sem ganho (a identidade já está na carteirinha).
+const RAIL_W = 56;
 
 // Shell da área autenticada: navegação fixa + drawer próprio com Animated (não
 // Reanimated — incompatível com Expo Go SDK 54). Reproduz o MVP.
@@ -30,6 +33,10 @@ export default function AppLayout() {
   const anim = useRef(new Animated.Value(-DRAWER_W)).current;
   const { width, height } = useWindowDimensions();
   const isLandscape = width > height;
+  // O exportar na trilha só faz sentido na carteirinha; em Documentos ou Perfil
+  // seria uma ação órfã. `segments[1]` é undefined na raiz de (app).
+  const segments = useSegments() as string[];
+  const naCarteirinha = !segments[1];
 
   const openDrawer = () => {
     setOpen(true);
@@ -59,6 +66,8 @@ export default function AppLayout() {
       {isLandscape ? (
         <SafeAreaView style={styles.rail} edges={['top', 'bottom', 'left']} testID="nav-rail">
           {menuButton}
+          <View style={styles.railSpacer} />
+          {naCarteirinha ? <ExportRailButton /> : null}
         </SafeAreaView>
       ) : (
         <SafeAreaView style={styles.header} edges={['top']} testID="nav-header">
@@ -103,9 +112,15 @@ const styles = StyleSheet.create({
     width: RAIL_W,
     alignItems: 'center',
     paddingTop: 8,
+    // Afasta o conteúdo da borda azul da direita: era isso que deixava o ícone
+    // do menu visualmente colado na linha.
+    paddingRight: 1,
     backgroundColor: colors.background,
     borderRightWidth: 1,
     borderRightColor: colors.accentBlue,
+  },
+  railSpacer: {
+    flex: 1,
   },
   header: {
     flexDirection: 'row',
