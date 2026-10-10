@@ -4,9 +4,17 @@ import { formatCpf, formatDate } from '@/lib/format';
 import LeftStrip from './LeftStrip';
 import { CARD_H } from './cardBase';
 
-// Assinaturas fixas (sempre as mesmas) — extraídas do modelo oficial do cliente.
-const ASSINATURA_PRESIDENTE = require('../../../assets/assinatura-presidente.png');
-const ASSINATURA_SECRETARIO = require('../../../assets/assinatura-secretario.png');
+// Imagens empacotadas: hoje são apenas FALLBACK. Nome, cargo e imagem vêm da
+// configuração do servidor (`member.assinaturas`) para que trocar a diretoria não
+// exija gerar APK — ver spec `assinaturas-conselho`. Elas seguem aqui para um
+// servidor sem a configuração nova degradar para o visual atual, em vez de
+// exibir espaço em branco.
+const FALLBACK_SIG_1 = require('../../../assets/assinatura-presidente.png');
+const FALLBACK_SIG_2 = require('../../../assets/assinatura-secretario.png');
+
+// Usados só quando o servidor não devolve `assinaturas` (APK novo + API antiga).
+const CARGO_PADRAO_1 = 'Presidente do COPVASF';
+const CARGO_PADRAO_2 = 'Secretário Geral do COPVASF';
 
 const CONTENT_LEFT = 94;
 
@@ -15,6 +23,8 @@ type Props = {
 };
 
 export default function CardBack({ member }: Props) {
+  const [sig1, sig2] = member.assinaturas ?? [];
+
   return (
     <>
       <LeftStrip height={CARD_H} />
@@ -40,15 +50,15 @@ export default function CardBack({ member }: Props) {
 
         <View style={styles.sigRow}>
           <Signature
-            name={member.presidente}
-            role="Presidente do COPVASF"
-            signature={ASSINATURA_PRESIDENTE}
+            name={sig1?.nome ?? member.presidente}
+            role={sig1?.cargo ?? CARGO_PADRAO_1}
+            signature={sig1?.imagemUrl ? { uri: sig1.imagemUrl } : FALLBACK_SIG_1}
             testID="sig-presidente"
           />
           <Signature
-            name={member.secretario}
-            role="Secretário Geral do COPVASF"
-            signature={ASSINATURA_SECRETARIO}
+            name={sig2?.nome ?? member.secretario}
+            role={sig2?.cargo ?? CARGO_PADRAO_2}
+            signature={sig2?.imagemUrl ? { uri: sig2.imagemUrl } : FALLBACK_SIG_2}
             testID="sig-secretario"
           />
         </View>

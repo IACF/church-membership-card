@@ -18,5 +18,11 @@ export const memberFixture: Member = {
   inadimplente: false,
   cnpj: '66.551.138/0001-97',
   presidente: 'José Humberto S. Santos',
-  secretario: 'Lucas de Souza Conceição',
+  secretario: 'Luide Carlos Silva Santana',
+  // Vindo da configuração do servidor (spec `assinaturas-conselho`). Sem
+  // `imagemUrl` de propósito: exercita o fallback para a imagem empacotada.
+  assinaturas: [
+    { nome: 'José Humberto S. Santos', cargo: 'Presidente do COPVASF' },
+    { nome: 'Luide Carlos Silva Santana', cargo: 'Vice-presidente' },
+  ],
 };

@@ -142,8 +142,16 @@ function back(member: Member, assets: CardAssets): string {
         ${gridField('Estado Civil:', member.estadoCivil)}
       </div>
       <div class="sig-row">
-        ${signature(member.presidente, 'Presidente do COPVASF', assets.assinaturaPresidente)}
-        ${signature(member.secretario, 'Secretário Geral do COPVASF', assets.assinaturaSecretario)}
+        ${signature(
+          member.assinaturas?.[0]?.nome ?? member.presidente,
+          member.assinaturas?.[0]?.cargo ?? 'Presidente do COPVASF',
+          assets.assinaturaPresidente,
+        )}
+        ${signature(
+          member.assinaturas?.[1]?.nome ?? member.secretario,
+          member.assinaturas?.[1]?.cargo ?? 'Secretário Geral do COPVASF',
+          assets.assinaturaSecretario,
+        )}
       </div>
       <div class="legal">O portador da presente, está apto a exercer suas atribuições como Capelão Eclesiástico de acordo com o Art. 5º, Inciso VII da CF e a Lei Federal nº 9.982 de 14 de julho de 2000.</div>
     </div>

@@ -1,4 +1,4 @@
-import { Stack } from 'expo-router';
+import { Stack, useSegments } from 'expo-router';
 import { useRef, useState } from 'react';
 import {
   Animated,
@@ -7,18 +7,36 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
+  useWindowDimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DrawerContent from '@/ui/shell/DrawerContent';
+import ExportRailButton from '@/ui/shell/ExportRailButton';
 import { colors } from '@/theme/theme';
 
 const DRAWER_W = 280;
+// Largura da trilha vertical em paisagem. 56px (e não 48) para o ícone do menu
+// não encostar na borda azul da direita — com 48 a folga ficava apertada demais.
+// Alargar não custa nada ao cartão: deitado sobra largura e falta altura, então
+// quem limita o tamanho é a altura. O título "COPVASF" não entra: não cabe, e
+// girá-lo custaria complexidade sem ganho (a identidade já está na carteirinha).
+const RAIL_W = 56;
 
-// Shell da área autenticada: header fixo (hambúrguer + "COPVASF") + drawer próprio
-// com Animated (não Reanimated — incompatível com Expo Go SDK 54). Reproduz o MVP.
+// Shell da área autenticada: navegação fixa + drawer próprio com Animated (não
+// Reanimated — incompatível com Expo Go SDK 54). Reproduz o MVP.
+//
+// Em RETRATO a navegação é o cabeçalho horizontal de sempre. Em PAISAGEM vira uma
+// TRILHA VERTICAL à esquerda: o cabeçalho consumia altura justamente onde ela é
+// escassa, impedindo a carteirinha de caber sem rolagem (spec `carteirinha-paisagem`).
 export default function AppLayout() {
   const [open, setOpen] = useState(false);
   const anim = useRef(new Animated.Value(-DRAWER_W)).current;
+  const { width, height } = useWindowDimensions();
+  const isLandscape = width > height;
+  // O exportar na trilha só faz sentido na carteirinha; em Documentos ou Perfil
+  // seria uma ação órfã. `segments[1]` é undefined na raiz de (app).
+  const segments = useSegments() as string[];
+  const naCarteirinha = !segments[1];
 
   const openDrawer = () => {
     setOpen(true);
@@ -37,20 +55,27 @@ export default function AppLayout() {
     }).start(() => setOpen(false));
   };
 
+  const menuButton = (
+    <TouchableOpacity testID="menu-button" onPress={openDrawer} style={styles.menuBtn} hitSlop={8}>
+      <Text style={styles.menuIcon}>☰</Text>
+    </TouchableOpacity>
+  );
+
   return (
-    <View style={styles.root}>
-      <SafeAreaView style={styles.header} edges={['top']}>
-        <TouchableOpacity
-          testID="menu-button"
-          onPress={openDrawer}
-          style={styles.menuBtn}
-          hitSlop={8}
-        >
-          <Text style={styles.menuIcon}>☰</Text>
-        </TouchableOpacity>
-        <Text style={styles.title}>COPVASF</Text>
-        <View style={styles.spacer} />
-      </SafeAreaView>
+    <View style={[styles.root, isLandscape && styles.rootLandscape]}>
+      {isLandscape ? (
+        <SafeAreaView style={styles.rail} edges={['top', 'bottom', 'left']} testID="nav-rail">
+          {menuButton}
+          <View style={styles.railSpacer} />
+          {naCarteirinha ? <ExportRailButton /> : null}
+        </SafeAreaView>
+      ) : (
+        <SafeAreaView style={styles.header} edges={['top']} testID="nav-header">
+          {menuButton}
+          <Text style={styles.title}>COPVASF</Text>
+          <View style={styles.spacer} />
+        </SafeAreaView>
+      )}
 
       <View style={styles.content}>
         <Stack screenOptions={{ headerShown: false }} />
@@ -78,6 +103,24 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: colors.background,
+  },
+  // Paisagem: trilha e conteúdo lado a lado, em vez de empilhados.
+  rootLandscape: {
+    flexDirection: 'row',
+  },
+  rail: {
+    width: RAIL_W,
+    alignItems: 'center',
+    paddingTop: 8,
+    // Afasta o conteúdo da borda azul da direita: era isso que deixava o ícone
+    // do menu visualmente colado na linha.
+    paddingRight: 1,
+    backgroundColor: colors.background,
+    borderRightWidth: 1,
+    borderRightColor: colors.accentBlue,
+  },
+  railSpacer: {
+    flex: 1,
   },
   header: {
     flexDirection: 'row',

@@ -10,15 +10,50 @@ const HORIZONTAL_MARGIN = 24;
 // Teto para telas grandes (tablets), evitando um cartão desproporcionalmente enorme.
 const MAX_SCALE = 1.8;
 
-// Fator de escala do cartão a partir das dimensões da janela. Guiado pela LARGURA
-// disponível (mantém a proporção 340:215), com um teto pela altura da janela e por
-// MAX_SCALE. A tela da carteirinha ROLA na vertical (ScrollView), então em paisagem
-// o cartão cresce usando a largura ampla em vez de encolher pela altura curta —
-// e nada é cortado quando ele passa da área visível. Telas pequenas → < 1 (reduz).
-// Puro/determinístico para ser testado sem renderizar.
-export function computeCardScale(windowWidth: number, windowHeight: number): number {
-  const byWidth = Math.max(windowWidth - HORIZONTAL_MARGIN, 1) / CARD_W;
-  const byHeight = Math.max(windowHeight, 1) / CARD_H;
+// Altura ocupada por tudo que divide a área de conteúdo com o cartão. Constante
+// porque são textos de tamanho fixo; medi-los exigiria um segundo onLayout e um
+// ciclo extra de layout, sem ganho.
+//
+// Os valores espelham os estilos reais — somá-los às cegas foi o que me fez errar
+// antes: eu havia esquecido o paddingVertical do container, e o cartão vazava
+// 55px para fora da tela em paisagem.
+const HINT_H = 14 + 18; // marginTop + linha de "↻ Toque para virar"
+const EXPORT_H = 16 + 15; // spacing.md + linha de "Exportar PDF"
+const CONTENT_PADDING_V = 24 * 2; // spacing.lg em cima e embaixo (styles.center)
+
+// RETRATO: dica e botão empilhados abaixo do cartão. Há altura de sobra.
+export const CARD_CHROME_PORTRAIT = HINT_H + EXPORT_H + CONTENT_PADDING_V;
+
+// PAISAGEM: nada divide a altura com o cartão. A altura é o recurso ESCASSO
+// (o cartão usava 72% dela enquanto 45% da largura ficava vazia), então a dica
+// vira um selo sobreposto no canto do cartão e o "Exportar PDF" migra para a
+// trilha vertical — ambos passam a consumir largura, que sobra. Restam apenas
+// 8px de respiro em cima e embaixo, para o cartão não encostar nas bordas.
+// Resultado: o cartão cresce ~34% e passa a ocupar ~96% da altura.
+export const CARD_CHROME_LANDSCAPE = 8 * 2;
+
+export function cardChrome(isLandscape: boolean): number {
+  return isLandscape ? CARD_CHROME_LANDSCAPE : CARD_CHROME_PORTRAIT;
+}
+
+// Fator de escala do cartão a partir da ÁREA DISPONÍVEL — não da janela.
+//
+// Antes esta função recebia as dimensões da janela e usava a altura cheia como
+// teto. Só que o cartão vive numa área bem menor: descontados cabeçalho, dica,
+// botão de exportar e área segura, sobram ~60% da altura num celular em paisagem.
+// O cálculo "achava" que cabia e a tela rolava — ver spec `carteirinha-paisagem`.
+//
+// Agora recebe a área de conteúdo já medida (onLayout) e desconta o espaço da
+// dica/botão, então o resultado CABE de fato. Em retrato a folga vertical é
+// grande e a largura continua mandando, como antes.
+// Pura/determinística para ser testada sem renderizar.
+export function computeCardScale(
+  availableWidth: number,
+  availableHeight: number,
+  isLandscape = false,
+): number {
+  const byWidth = Math.max(availableWidth - HORIZONTAL_MARGIN, 1) / CARD_W;
+  const byHeight = Math.max(availableHeight - cardChrome(isLandscape), 1) / CARD_H;
   return Math.min(byWidth, byHeight, MAX_SCALE);
 }
 

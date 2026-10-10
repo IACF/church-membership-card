@@ -99,6 +99,14 @@ docker compose build --no-cache
 
 ---
 
+## Build de distribuição (EAS)
+
+O app aponta para a API pelo `EXPO_PUBLIC_API_URL`, que em produção vale `https://copvasf.com.br` e
+vem do **`eas.json`** — não do `.env`, que está no `.gitignore` e nunca chega ao builder.
+
+O procedimento completo (token de acesso, comandos, armadilhas e verificação do APK gerado) está em
+**[`BUILD-APK.md`](BUILD-APK.md)**.
+
 ## Estrutura do projeto
 
 ```
