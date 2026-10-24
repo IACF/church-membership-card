@@ -103,3 +103,29 @@ describe('exportCardPdf (nativo)', () => {
     });
   });
 });
+
+// Diagnóstico: quando uma etapa nativa falha, o erro precisa dizer QUAL etapa e qual
+// foi a causa original. Sem isso o usuário vê só "Algo deu errado" e a falha vira
+// indiagnosticável — foi exatamente o que aconteceu com o export em produção.
+describe('exportCardPdf — detalhe da falha', () => {
+  it('identifica a etapa "print" e preserva a causa original', async () => {
+    mockPrintToFileAsync.mockRejectedValueOnce(new Error('WebView render failed'));
+
+    await expect(exportCardPdf(member)).rejects.toMatchObject({
+      kind: 'unknown',
+      detail: expect.stringContaining('[print]'),
+    });
+
+    mockPrintToFileAsync.mockResolvedValue({ uri: 'file:///tmp/print-xyz.pdf' });
+  });
+
+  it('identifica a etapa "open" quando a abertura do PDF falha', async () => {
+    mockShareAsync.mockRejectedValueOnce(new Error('activity not found'));
+
+    await expect(exportCardPdf(member)).rejects.toMatchObject({
+      detail: expect.stringContaining('[open]'),
+    });
+
+    mockShareAsync.mockResolvedValue(undefined);
+  });
+});

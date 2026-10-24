@@ -31,6 +31,11 @@ export default function ExportPdfButton({ member }: Props) {
           {error.message}
         </Text>
       ) : null}
+      {error?.detail ? (
+        <Text style={s.errorDetail} testID="export-error-detail" selectable>
+          {error.detail}
+        </Text>
+      ) : null}
     </View>
   );
 }
@@ -52,6 +57,14 @@ const s = StyleSheet.create({
   error: {
     color: colors.danger,
     fontSize: 12,
+    marginTop: spacing.xs,
+    textAlign: 'center',
+    paddingHorizontal: spacing.lg,
+  },
+  // Detalhe técnico: discreto e selecionável, para o usuário copiar e reportar.
+  errorDetail: {
+    color: colors.textSecondary,
+    fontSize: 10,
     marginTop: spacing.xs,
     textAlign: 'center',
     paddingHorizontal: spacing.lg,

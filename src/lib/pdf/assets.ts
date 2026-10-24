@@ -1,18 +1,26 @@
 import { Platform } from 'react-native';
-import { Asset } from 'expo-asset';
 import { File, Paths } from 'expo-file-system';
 import type { Member } from '@/model/member';
 import type { CardAssets } from './cardHtml';
+import {
+  BRASAO_DATA_URL,
+  LOGO_DATA_URL,
+  SIG_PRESIDENTE_DATA_URL,
+  SIG_SECRETARIO_DATA_URL,
+} from './assets.base64';
 
-// Assets estáticos do card (os mesmos exibidos na tela). require → módulo do bundler.
-const BRASAO = require('../../../assets/brasao-republica.png');
-const LOGO = require('../../../assets/copvasf-logo.png');
-const SIG_PRESIDENTE = require('../../../assets/assinatura-presidente.png');
-const SIG_SECRETARIO = require('../../../assets/assinatura-secretario.png');
+// Assets estáticos do card embutidos em tempo de build (ver scripts/gen-pdf-assets.mjs).
+//
+// Antes eles eram resolvidos em runtime com `Asset.fromModule(...)` + leitura do
+// arquivo. Isso funciona no dev, onde o Metro serve a imagem e ela vai parar no
+// cache com um `file://` absoluto — mas quebra no APK de release: ali o Metro
+// compila as imagens de `require()` como RECURSOS Android (res/), que não têm
+// caminho de arquivo. A leitura falhava com
+//   java.lang.IllegalArgumentException: URI is not absolute
+// Embutido, o mesmo código serve dev, release, nativo e web.
 
-// Baixa uma URL (bundler ou remota) e converte para data URI base64. Só usado na
-// web (onde FileReader existe): garante que a imagem fique EMBUTIDA no HTML — uma
-// URL relativa não resolveria na aba about:blank aberta para imprimir o PDF.
+// Baixa uma URL remota e converte para data URI base64. Usado só na web, para a
+// FOTO do membro (URL http real, ao contrário dos assets estáticos já embutidos).
 async function urlToDataUrl(url: string): Promise<string> {
   const res = await fetch(url);
   const blob = await res.blob();
@@ -22,17 +30,6 @@ async function urlToDataUrl(url: string): Promise<string> {
     reader.onloadend = () => resolve(reader.result as string);
     reader.readAsDataURL(blob);
   });
-}
-
-// Resolve um asset PNG para data URI base64 (embutido no HTML do PDF). Web e nativo
-// SEMPRE embutem: o WebView do print/aba não acessa assets do bundler por URL.
-async function moduleToDataUrl(mod: number): Promise<string> {
-  const asset = Asset.fromModule(mod);
-  await asset.downloadAsync();
-  const uri = asset.localUri ?? asset.uri;
-  if (Platform.OS === 'web') return urlToDataUrl(uri);
-  const base64 = await new File(uri).base64();
-  return `data:image/png;base64,${base64}`;
 }
 
 // Resolve a foto do membro (photoUrl remoto) para uso no <img> do PDF.
@@ -63,12 +60,13 @@ async function photoToSrc(url: string): Promise<string | undefined> {
 
 // Reúne todos os assets prontos (base64) para o buildCardHtml.
 export async function resolveCardAssets(member: Member): Promise<CardAssets> {
-  const [brasao, logo, assinaturaPresidente, assinaturaSecretario] = await Promise.all([
-    moduleToDataUrl(BRASAO),
-    moduleToDataUrl(LOGO),
-    moduleToDataUrl(SIG_PRESIDENTE),
-    moduleToDataUrl(SIG_SECRETARIO),
-  ]);
+  // Estáticos: constantes, sem I/O nem resolução de asset — não podem falhar.
   const photo = member.photoUrl ? await photoToSrc(member.photoUrl) : undefined;
-  return { brasao, logo, assinaturaPresidente, assinaturaSecretario, photo };
+  return {
+    brasao: BRASAO_DATA_URL,
+    logo: LOGO_DATA_URL,
+    assinaturaPresidente: SIG_PRESIDENTE_DATA_URL,
+    assinaturaSecretario: SIG_SECRETARIO_DATA_URL,
+    photo,
+  };
 }
