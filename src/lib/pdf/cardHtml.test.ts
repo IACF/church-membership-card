@@ -18,6 +18,10 @@ const member: Member = {
   inadimplente: false,
   presidente: 'José Humberto S. Santos',
   secretario: 'Lucas de Souza Conceição',
+  assinaturas: [
+    { nome: 'José Humberto S. Santos', cargo: 'Presidente do COPVASF' },
+    { nome: 'Luide Carlos Silva Santana', cargo: 'Vice-presidente' },
+  ],
 };
 
 const assets: CardAssets = {
@@ -52,10 +56,16 @@ describe('buildCardHtml', () => {
     expect(html).toContain('19/07/1993');
   });
 
-  it('inclui presidente/secretário com os cargos', () => {
+  // Nome e cargo vêm da CONFIGURAÇÃO do servidor (`member.assinaturas`), não de
+  // strings fixas — é o que permite trocar a diretoria sem gerar APK
+  // (spec `assinaturas-conselho`). O fixture traz Vice-presidente de propósito:
+  // se alguém voltar a cravar o cargo no código, este teste quebra.
+  it('usa nome e cargo vindos da configuração', () => {
     expect(html).toContain('José Humberto S. Santos');
     expect(html).toContain('Presidente do COPVASF');
-    expect(html).toContain('Secretário Geral do COPVASF');
+    expect(html).toContain('Luide Carlos Silva Santana');
+    expect(html).toContain('Vice-presidente');
+    expect(html).not.toContain('Secretário Geral do COPVASF');
   });
 
   it('embute os assets (brasão, logo, 2 assinaturas, foto) como data URI', () => {

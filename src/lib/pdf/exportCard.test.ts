@@ -63,6 +63,10 @@ const member: Member = {
   inadimplente: false,
   presidente: 'Presidente',
   secretario: 'Secretário',
+  assinaturas: [
+    { nome: 'José Humberto S. Santos', cargo: 'Presidente do COPVASF' },
+    { nome: 'Luide Carlos Silva Santana', cargo: 'Vice-presidente' },
+  ],
 };
 
 beforeEach(() => jest.clearAllMocks());

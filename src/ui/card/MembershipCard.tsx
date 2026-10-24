@@ -15,17 +15,26 @@ import { CARD_W, CARD_H, computeCardScale } from './cardBase';
 
 type Props = {
   member: Member;
+  // Área de conteúdo medida pela tela (onLayout). Enquanto não chega — primeiro
+  // frame — cai nas dimensões da janela, evitando piscar.
+  available?: { width: number; height: number };
 };
 
-export default function MembershipCard({ member }: Props) {
+export default function MembershipCard({ member, available }: Props) {
   const flipAnim = useRef(new Animated.Value(0)).current;
   const isFlippedRef = useRef(false);
 
-  // Escala responsiva: recalculada a cada mudança de dimensão (inclui rotação,
-  // via useWindowDimensions → re-render). Aplicada como transform no container,
-  // preservando o layout absoluto interno. Ver spec `carteirinha-responsiva`.
+  // Escala responsiva: recalculada a cada mudança de dimensão (inclui rotação).
+  // Usa a ÁREA MEDIDA quando disponível — é o que faz o cartão caber sem rolagem
+  // em paisagem (spec `carteirinha-paisagem`); a janela é só o fallback do
+  // primeiro frame. Aplicada como transform, preservando o layout absoluto.
   const { width, height } = useWindowDimensions();
-  const scale = computeCardScale(width, height);
+  const isLandscape = width > height;
+  const scale = computeCardScale(
+    available?.width ?? width,
+    available?.height ?? height,
+    isLandscape,
+  );
 
   const flip = () => {
     const toValue = isFlippedRef.current ? 0 : 1;
@@ -83,10 +92,25 @@ export default function MembershipCard({ member }: Props) {
 
             {/* Tarja de inadimplência: por cima das faces (fora do flip). */}
             {member.inadimplente ? <DelinquencyBanner /> : null}
+
+            {/* Em PAISAGEM a dica vira um selo sobreposto no canto do cartão: ali
+                ela não consome altura, que é o recurso escasso deitado. Fica
+                dentro do container escalado, então acompanha o tamanho do cartão. */}
+            {isLandscape ? (
+              <Text style={s.hintOverlay} testID="flip-hint">
+                ↻ virar
+              </Text>
+            ) : null}
           </View>
         </View>
       </TouchableOpacity>
-      <Text style={s.hint}>↻ Toque para virar</Text>
+
+      {/* Em RETRATO há altura de sobra: a dica fica abaixo, mais legível. */}
+      {!isLandscape ? (
+        <Text style={s.hint} testID="flip-hint">
+          ↻ Toque para virar
+        </Text>
+      ) : null}
     </View>
   );
 }
@@ -124,5 +148,15 @@ const s = StyleSheet.create({
     fontSize: 12,
     marginTop: 14,
     letterSpacing: 0.3,
+  },
+  // Selo discreto no canto inferior direito do cartão (só em paisagem).
+  // Posicionado em coordenadas da caixa-base 340×215, escalando junto.
+  hintOverlay: {
+    position: 'absolute',
+    right: 8,
+    bottom: 5,
+    color: '#94a3b8',
+    fontSize: 7.5,
+    letterSpacing: 0.2,
   },
 });

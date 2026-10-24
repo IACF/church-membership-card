@@ -253,6 +253,8 @@ export interface components {
             estadoCivil: string;
             /** @default false */
             inadimplente: boolean;
+            /** @example https://drive.google.com/file/d/xxxx/view */
+            qrUrl?: string;
         };
         UpdateMemberDto: {
             /** @example Lucas */
@@ -285,6 +287,19 @@ export interface components {
             estadoCivil?: string;
             /** @default false */
             inadimplente: boolean;
+            /** @example https://drive.google.com/file/d/xxxx/view */
+            qrUrl?: string;
+        };
+        AssinaturaDto: {
+            /** @example Luide Carlos Silva Santana */
+            nome: string;
+            /** @example Vice-presidente */
+            cargo: string;
+            /**
+             * @description URL da imagem da assinatura. AUSENTE quando não configurada — nesse caso o cliente usa a imagem empacotada no app, para não exibir espaço em branco.
+             * @example https://copvasf.com.br/uploads/signatures/vice-presidente.png?v=1700000000000
+             */
+            imagemUrl?: string;
         };
         MeResponseDto: {
             /** @example João da Silva */
@@ -335,10 +350,18 @@ export interface components {
              * @example 66.551.138/0001-97
              */
             cnpj: string;
-            /** @example José Humberto S. Santos */
+            /**
+             * @description MANTIDO por compatibilidade: APKs anteriores a `assinaturas-conselho` leem este campo. Espelha o nome do primeiro item de `assinaturas`. Clientes novos devem usar `assinaturas`.
+             * @example José Humberto S. Santos
+             */
             presidente: string;
-            /** @example Lucas de Souza Conceição */
+            /**
+             * @description MANTIDO por compatibilidade — espelha o nome do segundo item de `assinaturas`.
+             * @example Luide Carlos Silva Santana
+             */
             secretario: string;
+            /** @description As duas assinaturas do verso da carteirinha, vindas da configuração do servidor (ver spec `assinaturas-conselho`). Sempre com dois itens. */
+            assinaturas: components["schemas"]["AssinaturaDto"][];
         };
         MemberLoginDto: {
             /**
@@ -786,6 +809,13 @@ export interface operations {
         responses: {
             /** @description Senha alterada */
             204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Senha atual incorreta ou nova senha igual à atual */
+            422: {
                 headers: {
                     [name: string]: unknown;
                 };

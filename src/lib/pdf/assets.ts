@@ -39,7 +39,25 @@ async function urlToDataUrl(url: string): Promise<string> {
 //   o <img> na aba de impressão exibe cross-origin sem exigir CORS, e o print
 //   embute a imagem já renderizada no PDF.
 // Sem foto ou falha total → undefined (o HTML usa o placeholder).
-async function photoToSrc(url: string): Promise<string | undefined> {
+// Tipo MIME a partir da extensão da URL. As assinaturas são PNG (fundo
+// transparente) e as fotos, JPEG — rotular tudo como JPEG, como se fazia antes,
+// embutia bytes PNG com o rótulo errado no HTML do PDF.
+function mimeDaUrl(url: string): string {
+  const semQuery = url.split('?')[0].toLowerCase();
+  if (semQuery.endsWith('.png')) return 'image/png';
+  if (semQuery.endsWith('.webp')) return 'image/webp';
+  return 'image/jpeg';
+}
+
+// Baixa uma imagem remota e devolve data URI base64.
+//
+// `nomeCache` É OBRIGATÓRIO e precisa ser ÚNICO por imagem. Antes esta função
+// usava um nome fixo ('copvasf-card-photo.jpg'); quando passou a servir também
+// às assinaturas, as três chamadas de resolveCardAssets — disparadas em paralelo
+// por Promise.all — passaram a disputar O MESMO arquivo: uma sobrescrevia,
+// outra apagava enquanto a terceira lia. Resultado em produção: a FOTO do membro
+// saía impressa no lugar da assinatura no PDF.
+async function remotaParaDataUrl(url: string, nomeCache: string): Promise<string | undefined> {
   if (Platform.OS === 'web') {
     try {
       return await urlToDataUrl(url);
@@ -48,25 +66,57 @@ async function photoToSrc(url: string): Promise<string | undefined> {
     }
   }
   try {
-    const dest = new File(Paths.cache, 'copvasf-card-photo.jpg');
+    const dest = new File(Paths.cache, nomeCache);
     const downloaded = await File.downloadFileAsync(url, dest, { idempotent: true });
     const base64 = await downloaded.base64();
     downloaded.delete();
-    return `data:image/jpeg;base64,${base64}`;
+    return `data:${mimeDaUrl(url)};base64,${base64}`;
   } catch {
     return undefined;
   }
 }
 
+async function photoToSrc(url: string): Promise<string | undefined> {
+  return remotaParaDataUrl(url, 'copvasf-card-photo.jpg');
+}
+
 // Reúne todos os assets prontos (base64) para o buildCardHtml.
+// Assinatura configurada no servidor: baixa e embute. Usa o MESMO caminho do
+// `photoToSrc` (URL HTTPS absoluta → download → base64), que é comprovadamente
+// seguro no APK de release — o que falhava eram assets EMPACOTADOS, resolvidos em
+// runtime (ver BUILD-APK.md, armadilha nº 1). Sem URL, ou se o download falhar,
+// devolve a constante embutida, para o PDF nunca sair com espaço em branco.
+async function assinaturaToSrc(
+  url: string | undefined,
+  embutida: string,
+  nomeCache: string,
+): Promise<string> {
+  if (!url) return embutida;
+  return (await remotaParaDataUrl(url, nomeCache)) ?? embutida;
+}
+
 export async function resolveCardAssets(member: Member): Promise<CardAssets> {
-  // Estáticos: constantes, sem I/O nem resolução de asset — não podem falhar.
-  const photo = member.photoUrl ? await photoToSrc(member.photoUrl) : undefined;
+  // Brasão e logo: constantes, sem I/O nem resolução de asset — não podem falhar.
+  const [photo, assinaturaPresidente, assinaturaSecretario] = await Promise.all([
+    member.photoUrl ? photoToSrc(member.photoUrl) : Promise.resolve(undefined),
+    // Nomes de cache DISTINTOS: as três descargas correm em paralelo e um nome
+    // compartilhado faz uma sobrescrever a outra (ver remotaParaDataUrl).
+    assinaturaToSrc(
+      member.assinaturas?.[0]?.imagemUrl,
+      SIG_PRESIDENTE_DATA_URL,
+      'copvasf-card-sig-1',
+    ),
+    assinaturaToSrc(
+      member.assinaturas?.[1]?.imagemUrl,
+      SIG_SECRETARIO_DATA_URL,
+      'copvasf-card-sig-2',
+    ),
+  ]);
   return {
     brasao: BRASAO_DATA_URL,
     logo: LOGO_DATA_URL,
-    assinaturaPresidente: SIG_PRESIDENTE_DATA_URL,
-    assinaturaSecretario: SIG_SECRETARIO_DATA_URL,
+    assinaturaPresidente,
+    assinaturaSecretario,
     photo,
   };
 }
