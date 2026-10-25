@@ -4,7 +4,7 @@ import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
-import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, ActivityIndicator, Image, StyleSheet } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useSession } from '@/hooks/useSession';
 import { DAY, queryClient } from '@/lib/queryClient';
@@ -14,6 +14,15 @@ import { colors } from '@/theme/theme';
 // Persiste o cache do React Query no AsyncStorage → a carteirinha (query ['me'])
 // reaparece offline com a última sincronização.
 const persister = createAsyncStoragePersister({ storage: AsyncStorage });
+
+// Marca exibida na abertura, enquanto a sessão é restaurada.
+//
+// A splash NATIVA (app.json) mostra só o livro, de propósito: desde o Android 12
+// ela é renderizada dentro de uma máscara circular e qualquer texto seria
+// cortado — "COPVASF" viraria "COPVAS". Aqui a tela é livre, então é onde o
+// lockup completo cabe. As duas usam o mesmo fundo (#0f172a) e o livro na mesma
+// posição relativa, então a transição passa despercebida.
+const MARCA = require('../assets/copvasf-marca.png');
 
 // Guard de rotas: decide entre (auth)/login, (auth)/change-password e (app).
 function useProtectedRoute() {
@@ -42,6 +51,13 @@ function RootNavigator() {
   if (!hydrated) {
     return (
       <View style={styles.splash}>
+        <Image
+          source={MARCA}
+          style={styles.marca}
+          resizeMode="contain"
+          testID="marca-boot"
+          accessibilityLabel="COPVASF — Conselho de Pastores do Vale do São Francisco"
+        />
         <ActivityIndicator color={colors.accentBlue} />
       </View>
     );
@@ -69,5 +85,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.background,
+  },
+  // Largura relativa: a marca acompanha a tela sem estourar em aparelho pequeno
+  // nem ficar minúscula em tablet. A altura é limitada para sobrar espaço ao
+  // indicador de carregamento mesmo em paisagem.
+  marca: {
+    width: '70%',
+    maxWidth: 420,
+    height: '45%',
+    marginBottom: 28,
   },
 });

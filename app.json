@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "copvasf",
+    "name": "Copvasf",
     "slug": "copvasf",
     "version": "1.0.0",
     "scheme": "copvasf",
@@ -14,11 +14,13 @@
       "backgroundColor": "#0f172a"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "br.org.copvasf.carteirinha",
+      "buildNumber": "1"
     },
     "android": {
       "package": "br.org.copvasf.carteirinha",
-      "versionCode": 7,
+      "versionCode": 9,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0f172a"
