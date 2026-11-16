@@ -31,7 +31,12 @@ export default function ExportPdfButton({ member }: Props) {
           {error.message}
         </Text>
       ) : null}
-      {error?.detail ? (
+      {/* O detalhe técnico ([assets] java.lang.IllegalArgumentException…) foi
+          essencial para diagnosticar falhas que só aparecem no APK, mas não é algo
+          que um membro deva ver — e, numa loja de aplicativos, rastro de exceção na
+          tela pega mal na revisão. Fica só no desenvolvimento; em produção segue
+          indo para o log nativo pelo console.error de exportCard.ts. */}
+      {__DEV__ && error?.detail ? (
         <Text style={s.errorDetail} testID="export-error-detail" selectable>
           {error.detail}
         </Text>
