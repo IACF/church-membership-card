@@ -249,6 +249,77 @@ Mesmo procedimento, trocando o perfil — o `production` gera *app bundle* em ve
 
 O AAB não se instala direto no aparelho; serve para envio à Play Store.
 
+### Inspecionar o AAB: o que muda em relação ao APK
+
+Duas diferenças fazem a verificação do APK dar **falso negativo** no AAB. Ambas me enganaram
+numa primeira leitura, e as duas vezes o erro foi do tipo pior: a ferramenta devolveu
+"está tudo certo" em vez de falhar.
+
+**1. O manifesto é protobuf, não AXML.** Decodificar como UTF-16, que funciona no APK,
+devolve string vazia — e um `grep` em string vazia não acha permissão nenhuma, o que parece
+exatamente com "nenhuma permissão declarada". Leia as strings UTF-8 e os nós `uses-permission`:
+
+```bash
+unzip -qo app.aab -d x
+python3 - <<'EOF'
+import re
+d = open('x/base/manifest/AndroidManifest.xml','rb').read()
+for m in re.finditer(rb'uses-permission', d):
+    n = re.search(rb'android\.permission\.[A-Z_]+', d[m.start():m.start()+140])
+    if n: print(n.group().decode())
+EOF
+```
+
+**2. O Hermes guarda parte das strings em UTF-16.** `grep -a 'Estados Unidos'` no bundle
+devolve zero mesmo com o texto presente. Busque nas duas codificações:
+
+```python
+d = open('x/base/assets/index.android.bundle','rb').read()
+for s in ['https://copvasf.com.br', 'Toque para virar']:
+    print(s, d.count(s.encode('utf-8')), d.count(s.encode('utf-16-le')))
+```
+
+### A armadilha das permissões
+
+O AAB `v10` saiu declarando **oito** permissões — entre elas `READ_EXTERNAL_STORAGE` e
+`WRITE_EXTERNAL_STORAGE` —, enquanto a política de privacidade publicada afirma que o app
+não solicita permissão nenhuma. Nada disso veio do nosso código: o `expo-file-system`
+declara as duas de armazenamento no manifesto dele, **sem `maxSdkVersion`**, e as outras
+vêm de AARs nativos.
+
+A ficha da Play Store **lista as permissões declaradas**, então a divergência apareceria para
+qualquer um que abrisse a página do app.
+
+A correção está no `app.json`, e vale para qualquer permissão que apareça sem ser pedida:
+
+```jsonc
+"android": {
+  "blockedPermissions": [
+    "android.permission.READ_EXTERNAL_STORAGE",
+    "android.permission.WRITE_EXTERNAL_STORAGE"
+  ]
+}
+```
+
+> Antes de bloquear, confirme que o app realmente não usa. No nosso caso não usa: o PDF é
+> gravado no diretório interno do próprio aplicativo e aberto por `content://`, o que não
+> exige permissão em versão alguma do Android.
+
+`src/test/app-config.test.ts` trava as duas de armazenamento e exige que
+`android.permissions` siga vazio — se um dia o app precisar de uma permissão de verdade, o
+teste falha e obriga a atualizar a política **antes** de publicar.
+
+### Checklist do AAB antes de enviar
+
+| conferir | esperado |
+|---|---|
+| permissões declaradas | só `INTERNET` |
+| `versionCode` no manifesto | o do `app.json`, incrementado |
+| `https://copvasf.com.br` no bundle | presente (UTF-8 ou UTF-16) |
+| `localhost` e IP de LAN | zero |
+| ícone em `base/res/mipmap-*/ic_launcher.webp` | o livro dourado sobre `#0f172a` — **abra a imagem**, não confie em heurística de cor |
+| rastro de exceção (`IllegalArgumentException`) | zero no bundle |
+
 ---
 
 ## Referência rápida

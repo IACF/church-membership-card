@@ -141,7 +141,9 @@ arte-mestra do ícone do app. Se a marca mudar, rode o script em vez de editar P
 
 ## Checklist antes de enviar
 
-- [ ] AAB gerado com `--profile production` e `versionCode` incrementado
+- [x] AAB gerado com `--profile production`, **versionCode 11**, verificado: só a permissão
+      `INTERNET`, aponta para `https://copvasf.com.br`, sem `localhost` nem IP de LAN
+      (`~/Downloads/copvasf-v11-playstore.aab`)
 - [x] Ícone 512×512 (`store/icone-512.png`) **pronto**
 - [x] Feature graphic (`store/feature-graphic-1024x500.png`) **pronta**
 - [x] Capturas de telefone (`store/screenshots/`, 6 arquivos) **prontas**
