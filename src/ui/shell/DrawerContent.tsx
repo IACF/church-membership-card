@@ -47,6 +47,16 @@ export default function DrawerContent({ onClose }: Props) {
       },
     },
     {
+      key: 'consentimentos',
+      icon: '✍️',
+      label: 'Consentimentos',
+      active: sub === 'consentimentos',
+      onPress: () => {
+        onClose();
+        router.push('/(app)/consentimentos');
+      },
+    },
+    {
       key: 'docs',
       icon: '📄',
       label: 'Documentos',
