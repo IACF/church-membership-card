@@ -1,5 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -7,13 +5,9 @@ import { useEffect } from 'react';
 import { View, ActivityIndicator, Image, StyleSheet } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useSession } from '@/hooks/useSession';
-import { DAY, queryClient } from '@/lib/queryClient';
+import { DAY, persister, queryClient } from '@/lib/queryClient';
 import { resolveRedirect } from '@/session/route-guard';
 import { colors } from '@/theme/theme';
-
-// Persiste o cache do React Query no AsyncStorage → a carteirinha (query ['me'])
-// reaparece offline com a última sincronização.
-const persister = createAsyncStoragePersister({ storage: AsyncStorage });
 
 // Marca exibida na abertura, enquanto a sessão é restaurada.
 //

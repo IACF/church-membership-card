@@ -67,6 +67,10 @@ const member: Member = {
     { nome: 'José Humberto S. Santos', cargo: 'Presidente do COPVASF' },
     { nome: 'Luide Carlos Silva Santana', cargo: 'Vice-presidente' },
   ],
+  consentimentos: {
+    transferenciaInternacional: { estado: 'pendente' },
+    versaoVigente: '2026-11-15',
+  },
 };
 
 beforeEach(() => jest.clearAllMocks());

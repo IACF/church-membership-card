@@ -25,4 +25,10 @@ export const memberFixture: Member = {
     { nome: 'José Humberto S. Santos', cargo: 'Presidente do COPVASF' },
     { nome: 'Luide Carlos Silva Santana', cargo: 'Vice-presidente' },
   ],
+  // Pendente é o estado de quem nunca se manifestou — o padrão correto, e o que
+  // todo membro cadastrado antes da feature apresenta.
+  consentimentos: {
+    transferenciaInternacional: { estado: 'pendente' },
+    versaoVigente: '2026-11-15',
+  },
 };

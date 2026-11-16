@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persister, queryClient } from '@/lib/queryClient';
 import type { MemberBasic, Session } from '@/model/session';
 import { clearSession, loadSession, saveSession } from './session.storage';
 
@@ -39,8 +40,21 @@ export const useSessionStore = create<SessionState>((set, get) => ({
     set({ mustChangePassword: false });
   },
 
+  // Encerra a sessão apagando TUDO o que o app guardou do membro no aparelho.
+  //
+  // Não basta remover o token: o cache persistido do React Query guarda a query
+  // ['me'] — nome, CPF, filiação, foto, igreja — no AsyncStorage, que não é
+  // cifrado, com gcTime de 7 dias. Sem a limpeza abaixo, sair num aparelho
+  // compartilhado deixava o dado pessoal legível por até uma semana.
+  //
+  // Também cobre o logout automático do 401 (src/api/client.ts), que chama este
+  // mesmo `clear`.
   clear: async () => {
     await clearSession();
+    // Ordem importa: zerar o cache em memória primeiro faz com que qualquer
+    // gravação pendente do persister escreva um cache já vazio.
+    queryClient.clear();
+    await persister.removeClient();
     set({
       token: null,
       member: null,

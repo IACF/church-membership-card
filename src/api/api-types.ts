@@ -68,6 +68,22 @@ export interface paths {
         patch: operations["MembersController_update"];
         trace?: never;
     };
+    "/admin/members/{id}/consentimentos": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["MembersController_registrarTermo"];
+        trace?: never;
+    };
     "/admin/members/{id}/photo": {
         parameters: {
             query?: never;
@@ -109,6 +125,22 @@ export interface paths {
         };
         get: operations["MeController_me"];
         put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/members/me/consentimentos": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["MeController_atualizarConsentimentos"];
         post?: never;
         delete?: never;
         options?: never;
@@ -247,7 +279,10 @@ export interface components {
             nomePai?: string;
             /** @example Maria Janete de Souza Conceição */
             nomeMae: string;
-            /** @example 1993-07-19 */
+            /**
+             * @description Data de nascimento (mínimo 18 anos)
+             * @example 1993-07-19
+             */
             nascimento: string;
             /** @example Casado */
             estadoCivil: string;
@@ -281,7 +316,10 @@ export interface components {
             nomePai?: string;
             /** @example Maria Janete de Souza Conceição */
             nomeMae?: string;
-            /** @example 1993-07-19 */
+            /**
+             * @description Data de nascimento (mínimo 18 anos)
+             * @example 1993-07-19
+             */
             nascimento?: string;
             /** @example Casado */
             estadoCivil?: string;
@@ -289,6 +327,13 @@ export interface components {
             inadimplente: boolean;
             /** @example https://drive.google.com/file/d/xxxx/view */
             qrUrl?: string;
+        };
+        RegistrarTermoDto: {
+            /**
+             * @description Data da assinatura do termo em papel. Não pode ser futura.
+             * @example 2026-11-10
+             */
+            transferenciaInternacionalAssinadoEm?: string;
         };
         AssinaturaDto: {
             /** @example Luide Carlos Silva Santana */
@@ -300,6 +345,23 @@ export interface components {
              * @example https://copvasf.com.br/uploads/signatures/vice-presidente.png?v=1700000000000
              */
             imagemUrl?: string;
+        };
+        ConsentimentoDto: {
+            /** @enum {string} */
+            estado: "pendente" | "concedido" | "revogado";
+            /** @example 2026-11-15T12:00:00.000Z */
+            concedidoEm?: string;
+            /** @example 2026-12-01T12:00:00.000Z */
+            revogadoEm?: string;
+            /** @example 2026-11-15 */
+            versaoDocumento?: string;
+            /** @enum {string} */
+            origem?: "app" | "termo-assinado";
+        };
+        ConsentimentosDto: {
+            transferenciaInternacional: components["schemas"]["ConsentimentoDto"];
+            /** @example 2026-11-15 */
+            versaoVigente: string;
         };
         MeResponseDto: {
             /** @example João da Silva */
@@ -362,6 +424,11 @@ export interface components {
             secretario: string;
             /** @description As duas assinaturas do verso da carteirinha, vindas da configuração do servidor (ver spec `assinaturas-conselho`). Sempre com dois itens. */
             assinaturas: components["schemas"]["AssinaturaDto"][];
+            consentimentos: components["schemas"]["ConsentimentosDto"];
+        };
+        AtualizarConsentimentosDto: {
+            /** @description Estado desejado do consentimento de transferência internacional */
+            transferenciaInternacional: boolean;
         };
         MemberLoginDto: {
             /**
@@ -681,6 +748,29 @@ export interface operations {
             };
         };
     };
+    MembersController_registrarTermo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RegistrarTermoDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     MembersController_setPhoto: {
         parameters: {
             query?: never;
@@ -760,6 +850,29 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MeResponseDto"];
+                };
+            };
+        };
+    };
+    MeController_atualizarConsentimentos: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AtualizarConsentimentosDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConsentimentosDto"];
                 };
             };
         };

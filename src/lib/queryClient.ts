@@ -1,3 +1,5 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
 import { QueryClient } from '@tanstack/react-query';
 
 const MINUTE = 1000 * 60;
@@ -14,3 +16,9 @@ export const queryClient = new QueryClient({
     },
   },
 });
+
+// Persiste o cache no AsyncStorage → a carteirinha (query ['me']) reaparece
+// offline com a última sincronização. Mora aqui, e não em app/_layout.tsx, porque
+// o logout precisa apagar o que foi gravado: o AsyncStorage NÃO é cifrado e o
+// cache guarda dado pessoal (nome, CPF, filiação, foto, igreja).
+export const persister = createAsyncStoragePersister({ storage: AsyncStorage });
