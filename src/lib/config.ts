@@ -11,3 +11,10 @@ export const VALIDATION_BASE_URL =
   process.env.EXPO_PUBLIC_VALIDATION_BASE_URL ??
   process.env.EXPO_PUBLIC_API_URL ??
   'http://localhost:3000';
+
+// URLs dos documentos legais públicos, servidos pela própria API
+// (specs/paginas-legais, no repo do server). Montadas a partir da MESMA base do
+// QR de validação para não escrever o domínio uma segunda vez: em dev apontam
+// para o servidor local, em produção para copvasf.com.br, sem configuração extra.
+export const PRIVACIDADE_URL = `${VALIDATION_BASE_URL}/privacidade`;
+export const TERMOS_URL = `${VALIDATION_BASE_URL}/termos`;

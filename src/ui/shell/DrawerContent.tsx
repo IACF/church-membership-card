@@ -1,7 +1,8 @@
 import { useRouter, useSegments } from 'expo-router';
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useMember } from '@/hooks/useMember';
 import { useSession } from '@/hooks/useSession';
+import { PRIVACIDADE_URL, TERMOS_URL } from '@/lib/config';
 
 type Props = {
   onClose: () => void;
@@ -57,6 +58,15 @@ export default function DrawerContent({ onClose }: Props) {
     },
   ];
 
+  // Abertos no navegador do sistema, e não numa WebView interna, de propósito:
+  // documento legal precisa ser compartilhável e imprimível, e o endereço tem de
+  // ficar visível ao membro. O .catch evita que a ausência de navegador derrube
+  // a tela.
+  const legais = [
+    { key: 'privacidade', icon: '🔒', label: 'Política de Privacidade', url: PRIVACIDADE_URL },
+    { key: 'termos', icon: '📜', label: 'Termos de Uso', url: TERMOS_URL },
+  ];
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.inner}>
       <View style={styles.header}>
@@ -88,6 +98,24 @@ export default function DrawerContent({ onClose }: Props) {
           <Text style={[styles.itemLabel, item.active && styles.itemLabelActive]}>
             {item.label}
           </Text>
+        </TouchableOpacity>
+      ))}
+
+      <View style={styles.divider} />
+
+      {legais.map((item) => (
+        <TouchableOpacity
+          key={item.key}
+          testID={`drawer-${item.key}`}
+          style={styles.item}
+          onPress={() => {
+            onClose();
+            void Linking.openURL(item.url).catch(() => undefined);
+          }}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.itemIcon}>{item.icon}</Text>
+          <Text style={styles.itemLabel}>{item.label}</Text>
         </TouchableOpacity>
       ))}
 
